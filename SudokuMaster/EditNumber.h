@@ -1,18 +1,19 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-// Class for making Text really easy
-class TextWizard
+class EditNumber
 {
 public:
-	// Constructor for Text values
-	TextWizard(sf::Vector2f pos, int size, const std::string& text, const std::string& fontFileLoc, sf::Color color = sf::Color::Black); 
+	// Default Constructor
+	EditNumber();
+	// Constructor for Editing numbers
+	EditNumber(sf::Vector2f pos, int size, const std::string& fontFileLoc, bool sel, float ID, sf::Color color = sf::Color::Black);
 
 	/* Centeres the text based on how wide the given area is
 	 (Optional)*/
 	void centerText(float width);
 
-	/* Sets the background highlight color 
+	/* Sets the background highlight color
 	(Optional)*/
 	void highlightText(sf::Color color);
 
@@ -22,14 +23,20 @@ public:
 	 */
 	void drawTo(sf::RenderWindow& window);
 
-	// Returns the Text of the Text Object
-	std::string getText(); 
+
+
+	// Returns the Number of the Text Object
+	int getNumber();
 	// Returns the position of the Text Object
 	sf::Vector2f getPosition();
 	// Returns the Height of the Text Object
 	float getHeight();
 	// Returns the Width of the Text Object
 	float getWidth();
+	// This is what notifies when you actually type something
+	void typedOn(sf::Event &event);
+	// Returns the ID of this Number Object
+	float getID();
 
 private:
 	sf::Text newText;
@@ -37,7 +44,12 @@ private:
 	sf::RectangleShape highlightShape;
 	float textWidth = 0;
 	float textHeight = 0;
+	float CNID = 1.01;
 	bool highlight = false;
+	bool selected = false;
 	sf::Vector2f position;
+	std::string text = "";
+	// Input logic to see if you delete the number or what you type
+	void inputLogic(int charTyped);
 };
 

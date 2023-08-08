@@ -1,8 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
+#include <vector>
 #include "TextWizard.h"
-
+#include "EditNumber.h"
 
 int main()
 {
@@ -21,13 +22,20 @@ int main()
     // Shapes for side bars
     sf::RectangleShape barLeft;
     sf::RectangleShape barRight;
+    // Creating the vector to hold each CellTextNum 9x9 board
+    std::vector<std::vector<EditNumber>> numberCells(9, std::vector<EditNumber>(9));
 
+    // Fonts:
+    // 
+    // data-latin.ttf
+    // Caviar Dreams Bold.ttf
+    //
     // Loading Title text
-    TextWizard titleText(sf::Vector2f(0,20), 60, "Sudoku:", "resources/Caviar Dreams Bold.ttf");
+    TextWizard titleText(sf::Vector2f(0,20), 60, "Sudoku:", "resources/data-latin.ttf");
     titleText.centerText(dif/2);
    
     // Loading Title subtext
-    TextWizard subText(sf::Vector2f(0, titleText.getHeight() + 30), 40, "Ultimate Edition", "resources/Caviar Dreams Bold.ttf");
+    TextWizard subText(sf::Vector2f(0, titleText.getHeight() + 30), 40, "Ultimate edition", "resources/data-latin.ttf");
     subText.centerText(dif / 2);
 
     // Draws board
@@ -65,11 +73,21 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
                 window.close();
-
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+            }
+            else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Delete) {
                 window.close();
+            }
+            else if (event.type == sf::Event::TextEntered) {
+                for (int x = 0; x < 8; x++) {
+                    for (int y = 0; y < 8; y++) {
+                        EditNumber& cellTextNum = numberCells[x][y];
+                        cellTextNum.typedOn(event);
+                        
+                    }
+                }
+            }
         }
 
         window.clear(sf::Color(0xEFEFEFFF));
@@ -81,18 +99,38 @@ int main()
         window.draw(barRight);
         // Loop for drawing the smaller cells
         for (int x = 0; x < 9; ++x){
+            // Declare a new column for this x index
+            std::vector<EditNumber> column;
             for (int y = 0; y < 9; ++y) {
+                
+
                 sf::RectangleShape cellNum;
                 cellNum.setFillColor(sf::Color(0xAFAFAF99));
                 cellNum.setSize(sf::Vector2f(cellNumWidth, cellNumWidth));
                 // Calculate position to account for the padding        \This is the origin/                                       \Also Origin/
                 cellNum.setPosition(x * (cellNumWidth + (float)wrap) + (dif / 2 + (float)wrap), y * (cellNumWidth + (float)wrap) + (float)wrap);
                 window.draw(cellNum);
+
+                // Calculates the position of each number text box
+                EditNumber cellTextNum(sf::Vector2f(x * (cellNumWidth + (float)wrap) + (dif / 2 + (float)wrap), y * (cellNumWidth + (float)wrap) + (float)wrap), 100, "resources/data-latin.ttf", true, 1.01f);
+                cellTextNum.centerText(cellNumWidth);
+                cellTextNum.highlightText(sf::Color::Red);
+                // Add EditNumber to the column
+                column.push_back(cellTextNum);
+            }
+            // Add the column to the numberCells vector
+            numberCells.push_back(column);
+        }
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                EditNumber& cellTextNum = numberCells[x][y];
+                std::cout << cellTextNum.getID();
+                cellTextNum.drawTo(window);
+                
             }
         }
         titleText.drawTo(window);
         subText.drawTo(window);
-
         window.display();
     }
 

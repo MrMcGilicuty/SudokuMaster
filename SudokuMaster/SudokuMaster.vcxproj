@@ -140,11 +140,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="EditNumber.cpp" />
     <ClCompile Include="MainClass.cpp" />
     <ClCompile Include="TextWizard.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EditNumber.h" />
     <ClInclude Include="TextWizard.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\Caviar Dreams Bold.ttf" />
+    <Font Include="resources\data-latin.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

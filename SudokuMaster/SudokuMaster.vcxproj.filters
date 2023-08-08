@@ -21,10 +21,24 @@
     <ClCompile Include="TextWizard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EditNumber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextWizard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EditNumber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\Caviar Dreams Bold.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="resources\data-latin.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
   </ItemGroup>
 </Project>

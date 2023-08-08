@@ -18,7 +18,6 @@ TextWizard::TextWizard(sf::Vector2f pos, int size, const std::string& text, cons
 }
 
 void TextWizard::centerText(float width) {
-    centered = true;
     textWidth = width;
     sf::Vector2f text = sf::Vector2f(newText.getLocalBounds().width, newText.getLocalBounds().width);
     newText.setPosition((width - text.x) / 2 + position.x, position.y);
@@ -26,9 +25,9 @@ void TextWizard::centerText(float width) {
 
 void TextWizard::highlightText(sf::Color color) {
     highlight = true;
-    highlightShape.setPosition(newText.getPosition());
+    highlightShape.setPosition(newText.getPosition().x + 4, newText.getPosition().y + 12);
     highlightShape.setFillColor(color);
-    highlightShape.setSize(sf::Vector2f(newText.getLocalBounds().width, newText.getLocalBounds().height));
+    highlightShape.setSize(sf::Vector2f(newText.getLocalBounds().width + 6, newText.getLocalBounds().height));
 }
 
 void TextWizard::drawTo(sf::RenderWindow& window) {

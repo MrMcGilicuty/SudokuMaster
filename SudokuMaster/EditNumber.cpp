@@ -7,6 +7,7 @@
 
 // hehehehhe no comments on .cpp files go brrrrrrrrrrrrrrrrrrrr
 EditNumber::EditNumber(sf::Vector2f pos, int size, const std::string& fontFileLoc, bool sel, float ID, sf::Color color) {
+    newText.setFont(newFont);
     newText.setPosition(pos);
     newText.setCharacterSize(size);
     newText.setFillColor(color);
@@ -15,7 +16,6 @@ EditNumber::EditNumber(sf::Vector2f pos, int size, const std::string& fontFileLo
         std::cout << "Error loading " << fontFileLoc << " file for custom font";
     }
 
-    newText.setFont(newFont);
     newText.setString(text);
     textWidth = newText.getLocalBounds().width;
     textHeight = newText.getLocalBounds().height;
@@ -25,9 +25,8 @@ EditNumber::EditNumber(sf::Vector2f pos, int size, const std::string& fontFileLo
 }
 
 void EditNumber::centerText(float width) {
-    textWidth = width;
-    sf::Vector2f text = sf::Vector2f(newText.getLocalBounds().width, newText.getLocalBounds().width);
-    newText.setPosition((width - text.x) / 2 + position.x, position.y);
+    textWidth = newText.getLocalBounds().width;
+    newText.setPosition((width - textWidth) / 2 + position.x, position.y + 15);
 }
 
 void EditNumber::showHitBox(bool show) {
@@ -35,6 +34,13 @@ void EditNumber::showHitBox(bool show) {
     highlightShape.setPosition(newText.getPosition().x, newText.getPosition().y);
     highlightShape.setFillColor(sf::Color::Red);
     highlightShape.setSize(sf::Vector2f(newText.getLocalBounds().width, newText.getLocalBounds().height));
+}
+
+void EditNumber::showHitBox(bool show, float length) {
+    highlight = show;
+    highlightShape.setPosition(position.x, position.y);
+    highlightShape.setFillColor(sf::Color(0x9F9F9F99));
+    highlightShape.setSize(sf::Vector2f(length, length));
 }
 
 void EditNumber::drawTo(sf::RenderWindow& window) {
@@ -47,14 +53,13 @@ void EditNumber::drawTo(sf::RenderWindow& window) {
 void EditNumber::typedOn(sf::Event& event) {
     if (selected) {
         int charTyped = event.text.unicode;
-        if (charTyped > 48 && charTyped < 58 || charTyped == BACKSPACE_KEY || charTyped == ENTER_KEY || charTyped == ESCAPE_KEY) {
-            if (text.length() < 1) {
-                inputLogic(charTyped);
-            }
-            else if (charTyped == BACKSPACE_KEY) {
+        if (charTyped > 48 && charTyped < 58 || charTyped == BACKSPACE_KEY || charTyped == ESCAPE_KEY) {
+            if (charTyped == BACKSPACE_KEY) {
                 text = "";
                 newText.setString(text);
-                
+            }
+            else {
+                inputLogic(charTyped);
             }
         }
     }
@@ -109,10 +114,11 @@ float EditNumber::getID() {
 
 void EditNumber::inputLogic(int charTyped) {
     if (charTyped != BACKSPACE_KEY && charTyped != ESCAPE_KEY) {
-        text += std::string(1, charTyped);
+        text = std::string(1, charTyped);
         newText.setString(text);
     }
     else if (charTyped == ESCAPE_KEY) {
+        showHitBox(false);
         selected = false;
     }
 }

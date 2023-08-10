@@ -14,9 +14,13 @@ public:
 	(Optional)*/
 	void centerText(float width);
 
-	/* Sets the background highlight color
+	/* Sets the background highlight on
 	(Optional)*/
 	void showHitBox(bool show);
+
+	/* Sets the background highlight on and what size it should be
+	(Optional)*/
+	void showHitBox(bool show, float length);
 
 	// Draws the Text to the given window (Required)
 	void drawTo(sf::RenderWindow& window);

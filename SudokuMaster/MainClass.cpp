@@ -29,6 +29,7 @@ int main()
     const float dif = window_size.x - window_size.y; // Difference between the width and height of the screen
     const float cellNumWidth = 155; // Size of each number cell
     const int wrap = (cellHeight / 3 - cellNumWidth); // The padding in-between each cellNum (in pixels)
+    std::string mode = "Sandbox";
 
     sf::RectangleShape boardV;
     sf::RectangleShape boardH;
@@ -49,8 +50,11 @@ int main()
     titleText.centerText(dif/2);
    
     // Loading Title subtext
-    TextWizard subText(sf::Vector2f(0, titleText.getHeight() + 30), 40, "Ultimate edition", "resources/data-latin.ttf");
+    TextWizard subText(sf::Vector2f(0, titleText.getHeight() + 50), 40, "Ultimate edition", "resources/data-latin.ttf");
     subText.centerText(dif / 2);
+
+    TextWizard modeText(sf::Vector2f(dif / 2 + window_size.y, 20), 60, mode + " Mode", "resources/data-latin.ttf");
+    modeText.centerText(dif / 2);
 
     // Draws board
     // Horizontal lines
@@ -91,8 +95,8 @@ int main()
             EditNumber* cellTextNum = new EditNumber(
                 sf::Vector2f(x * (cellNumWidth + (float)wrap) + (dif / 2 + (float)wrap), y * (cellNumWidth + (float)wrap) + (float)wrap),
                 100,
-                "resources/Caviar Dreams Bold.ttf",
-                false, 
+                "resources/data-latin.ttf",
+                false,
                 1.02f);
             // Add EditNumber to the row
             row.push_back(cellTextNum);
@@ -117,7 +121,6 @@ int main()
                     for (EditNumber* cellTextNum : row) {
 
                         cellTextNum->typedOn(event);
-                        
                     }
                 }
             }
@@ -126,8 +129,10 @@ int main()
                 for (std::vector<EditNumber*>& row : numberCells) {
                     for (EditNumber* cellTextNum : row) {
                         cellTextNum->deselect();
+                        cellTextNum->showHitBox(false);
                         if (cellTextNum->isMouseOver(window, cellNumWidth)) {
                             cellTextNum->select();
+                            cellTextNum->showHitBox(true, cellNumWidth);
                         }
                     }
                 }
@@ -141,7 +146,7 @@ int main()
         window.draw(boardEdge);
         window.draw(barLeft);
         window.draw(barRight);
-
+        modeText.drawTo(window);
         // Loop for drawing the smaller cells
         for (int x = 0; x < 9; ++x){
             for (int y = 0; y < 9; ++y) {

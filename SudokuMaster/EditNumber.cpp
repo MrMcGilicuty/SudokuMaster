@@ -1,14 +1,11 @@
 #include "EditNumber.h"
 #include <iostream>
 
-#define DELETE_KEY 8
+#define BACKSPACE_KEY 8
 #define ENTER_KEY 13
 #define ESCAPE_KEY 27
 
-EditNumber::EditNumber() : EditNumber(sf::Vector2f(0,0), 100, "resources/data-latin.ttf", false, 1.01f, sf::Color::Black) {
-    
-}
-
+// hehehehhe no comments on .cpp files go brrrrrrrrrrrrrrrrrrrr
 EditNumber::EditNumber(sf::Vector2f pos, int size, const std::string& fontFileLoc, bool sel, float ID, sf::Color color) {
     newText.setPosition(pos);
     newText.setCharacterSize(size);
@@ -33,34 +30,60 @@ void EditNumber::centerText(float width) {
     newText.setPosition((width - text.x) / 2 + position.x, position.y);
 }
 
-void EditNumber::highlightText(sf::Color color) {
-    highlight = true;
-    highlightShape.setPosition(newText.getPosition().x + 4, newText.getPosition().y + 12);
-    highlightShape.setFillColor(color);
-    highlightShape.setSize(sf::Vector2f(newText.getLocalBounds().width + 6, newText.getLocalBounds().height));
+void EditNumber::showHitBox(bool show) {
+    highlight = show;
+    highlightShape.setPosition(newText.getPosition().x, newText.getPosition().y);
+    highlightShape.setFillColor(sf::Color::Red);
+    highlightShape.setSize(sf::Vector2f(newText.getLocalBounds().width, newText.getLocalBounds().height));
 }
 
 void EditNumber::drawTo(sf::RenderWindow& window) {
     if (highlight) {
         window.draw(highlightShape);
     }
-    //window.draw(newText);
+    window.draw(newText);
 }
 
-void EditNumber::typedOn(sf::Event &event) {
+void EditNumber::typedOn(sf::Event& event) {
     if (selected) {
         int charTyped = event.text.unicode;
-        if (charTyped > 48 && charTyped < 58 || charTyped == DELETE_KEY || charTyped == ENTER_KEY || charTyped == ESCAPE_KEY) {
+        if (charTyped > 48 && charTyped < 58 || charTyped == BACKSPACE_KEY || charTyped == ENTER_KEY || charTyped == ESCAPE_KEY) {
             if (text.length() < 1) {
                 inputLogic(charTyped);
             }
-            else if (charTyped == DELETE_KEY) {
+            else if (charTyped == BACKSPACE_KEY) {
                 text = "";
                 newText.setString(text);
                 
             }
         }
     }
+}
+
+bool EditNumber::isMouseOver(sf::RenderWindow& window, float length) {
+    sf::Vector2i mouse = sf::Mouse::getPosition(window);
+
+    int posX = position.x;
+    int posY = position.y;
+
+    float endPosX = posX + length;
+    float endPosY = posY + length;
+    
+    if (mouse.x > posX && mouse.x < endPosX && mouse.y > posY && mouse.y < endPosY) {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void EditNumber::select() {
+    selected = true;
+}
+
+void EditNumber::deselect() {
+    selected = false;
 }
 
 int EditNumber::getNumber() {
@@ -85,7 +108,7 @@ float EditNumber::getID() {
 }
 
 void EditNumber::inputLogic(int charTyped) {
-    if (charTyped != DELETE_KEY && charTyped != ESCAPE_KEY) {
+    if (charTyped != BACKSPACE_KEY && charTyped != ESCAPE_KEY) {
         text += std::string(1, charTyped);
         newText.setString(text);
     }

@@ -5,6 +5,19 @@
 #include "TextWizard.h"
 #include "EditNumber.h"
 
+void dispose(std::vector<std::vector<EditNumber*>> numberCells, sf::RenderWindow &window) {
+    // Clean up memory before exiting
+    for (std::vector<EditNumber*>& row : numberCells) {
+        for (EditNumber* cellTextNum : row) {
+            delete cellTextNum; // Deallocate the object
+        }
+    }
+
+    // Clear the numberCells vector
+    numberCells.clear();
+    window.close();
+}
+
 int main()
 {
     const sf::Vector2u window_size{2560, 1440};
@@ -16,6 +29,7 @@ int main()
     const float dif = window_size.x - window_size.y; // Difference between the width and height of the screen
     const float cellNumWidth = 155; // Size of each number cell
     const int wrap = (cellHeight / 3 - cellNumWidth); // The padding in-between each cellNum (in pixels)
+
     sf::RectangleShape boardV;
     sf::RectangleShape boardH;
     sf::RectangleShape boardEdge;
@@ -23,7 +37,7 @@ int main()
     sf::RectangleShape barLeft;
     sf::RectangleShape barRight;
     // Creating the vector to hold each CellTextNum 9x9 board
-    std::vector<std::vector<EditNumber>> numberCells(9, std::vector<EditNumber>(9));
+    std::vector<std::vector<EditNumber*>> numberCells;
 
     // Fonts:
     // 
@@ -68,23 +82,53 @@ int main()
     barRight.setFillColor(sf::Color(0xEFEFEFFF));
     barRight.setPosition(window_size.y + dif / 2 + (float)wrap, 0);
 
+    for (int x = 0; x < 9; ++x) {
+        // Declare a new row for this x index
+        std::vector<EditNumber*> row;
+        for (int y = 0; y < 9; ++y) {
+
+            // Make the new object for the pointer
+            EditNumber* cellTextNum = new EditNumber(
+                sf::Vector2f(x * (cellNumWidth + (float)wrap) + (dif / 2 + (float)wrap), y * (cellNumWidth + (float)wrap) + (float)wrap),
+                100,
+                "resources/Caviar Dreams Bold.ttf",
+                false, 
+                1.02f);
+            // Add EditNumber to the row
+            row.push_back(cellTextNum);
+        }
+        // Add the row to the numberCells vector
+        numberCells.push_back(row);
+    }
+
     while (window.isOpen())
     {
         sf::Event event;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed) {
-                window.close();
+                dispose(numberCells, window);
             }
-            else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Delete) {
-                window.close();
+            else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tilde) {
+                dispose(numberCells, window);
             }
             else if (event.type == sf::Event::TextEntered) {
-                for (int x = 0; x < 8; x++) {
-                    for (int y = 0; y < 8; y++) {
-                        EditNumber& cellTextNum = numberCells[x][y];
-                        cellTextNum.typedOn(event);
+                for (std::vector<EditNumber*>& row : numberCells) {
+                    for (EditNumber* cellTextNum : row) {
+
+                        cellTextNum->typedOn(event);
                         
+                    }
+                }
+            }
+            else if (event.type == sf::Event::MouseButtonPressed) {
+
+                for (std::vector<EditNumber*>& row : numberCells) {
+                    for (EditNumber* cellTextNum : row) {
+                        cellTextNum->deselect();
+                        if (cellTextNum->isMouseOver(window, cellNumWidth)) {
+                            cellTextNum->select();
+                        }
                     }
                 }
             }
@@ -97,35 +141,23 @@ int main()
         window.draw(boardEdge);
         window.draw(barLeft);
         window.draw(barRight);
+
         // Loop for drawing the smaller cells
         for (int x = 0; x < 9; ++x){
-            // Declare a new column for this x index
-            std::vector<EditNumber> column;
             for (int y = 0; y < 9; ++y) {
-                
-
                 sf::RectangleShape cellNum;
                 cellNum.setFillColor(sf::Color(0xAFAFAF99));
                 cellNum.setSize(sf::Vector2f(cellNumWidth, cellNumWidth));
                 // Calculate position to account for the padding        \This is the origin/                                       \Also Origin/
                 cellNum.setPosition(x * (cellNumWidth + (float)wrap) + (dif / 2 + (float)wrap), y * (cellNumWidth + (float)wrap) + (float)wrap);
                 window.draw(cellNum);
-
-                // Calculates the position of each number text box
-                EditNumber cellTextNum(sf::Vector2f(x * (cellNumWidth + (float)wrap) + (dif / 2 + (float)wrap), y * (cellNumWidth + (float)wrap) + (float)wrap), 100, "resources/data-latin.ttf", true, 1.01f);
-                cellTextNum.centerText(cellNumWidth);
-                cellTextNum.highlightText(sf::Color::Red);
-                // Add EditNumber to the column
-                column.push_back(cellTextNum);
             }
-            // Add the column to the numberCells vector
-            numberCells.push_back(column);
         }
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
-                EditNumber& cellTextNum = numberCells[x][y];
-                std::cout << cellTextNum.getID();
-                cellTextNum.drawTo(window);
+        for (std::vector<EditNumber*>& row : numberCells) {
+            for (EditNumber* cellTextNum : row) {
+                // For every item in the vector draw to screen.
+                cellTextNum->centerText(cellNumWidth);
+                cellTextNum->drawTo(window);
                 
             }
         }

@@ -2,8 +2,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <filesystem>
 #include "TextWizard.h"
 #include "EditNumber.h"
+namespace fs = std::filesystem;
 
 void dispose(std::vector<std::vector<EditNumber*>> numberCells, sf::RenderWindow &window) {
     // Clean up memory before exiting
@@ -39,22 +41,30 @@ int main()
     sf::RectangleShape barRight;
     // Creating the vector to hold each CellTextNum 9x9 board
     std::vector<std::vector<EditNumber*>> numberCells;
+    //Map for Fonts
+    std::map<int, std::string> fonts {
+        { 1, "resources/data-latin.ttf" },
+        { 2, "resources/Caviar Dreams Bold.ttf" },
+    };
+    // Path of the level directory
+    std::string levelPath = "levels";
+    
 
-    // Fonts:
-    // 
-    // data-latin.ttf
-    // Caviar Dreams Bold.ttf
-    //
     // Loading Title text
-    TextWizard titleText(sf::Vector2f(0,20), 60, "Sudoku:", "resources/data-latin.ttf");
+    TextWizard titleText(sf::Vector2f(0,20), 60, "Sudoku:", fonts[1]);
     titleText.centerText(dif/2);
    
     // Loading Title subtext
-    TextWizard subText(sf::Vector2f(0, titleText.getHeight() + 50), 40, "Ultimate edition", "resources/data-latin.ttf");
+    TextWizard subText(sf::Vector2f(0, titleText.getHeight() + 50), 40, "Ultimate edition", fonts[1]);
     subText.centerText(dif / 2);
 
-    TextWizard modeText(sf::Vector2f(dif / 2 + window_size.y, 20), 60, mode + " Mode", "resources/data-latin.ttf");
+    // Loading Mode text
+    TextWizard modeText(sf::Vector2f(dif / 2 + window_size.y, 20), 60, mode + " Mode", fonts[1]);
     modeText.centerText(dif / 2);
+
+    // Loading Level text
+    TextWizard levelText(sf::Vector2f(dif / 2 + window_size.y, 180), 60, "Levels:", fonts[1]);
+    levelText.centerText(dif / 2);
 
     // Draws board
     // Horizontal lines
@@ -86,20 +96,22 @@ int main()
     barRight.setFillColor(sf::Color(0xEFEFEFFF));
     barRight.setPosition(window_size.y + dif / 2 + (float)wrap, 0);
 
+    int id(0);
     for (int x = 0; x < 9; ++x) {
         // Declare a new row for this x index
         std::vector<EditNumber*> row;
         for (int y = 0; y < 9; ++y) {
-
+            
             // Make the new object for the pointer
             EditNumber* cellTextNum = new EditNumber(
                 sf::Vector2f(x * (cellNumWidth + (float)wrap) + (dif / 2 + (float)wrap), y * (cellNumWidth + (float)wrap) + (float)wrap),
                 100,
-                "resources/data-latin.ttf",
+                fonts[2],
                 false,
-                1.02f);
+                id);
             // Add EditNumber to the row
             row.push_back(cellTextNum);
+            ++id;
         }
         // Add the row to the numberCells vector
         numberCells.push_back(row);
@@ -147,6 +159,7 @@ int main()
         window.draw(barLeft);
         window.draw(barRight);
         modeText.drawTo(window);
+        levelText.drawTo(window);
         // Loop for drawing the smaller cells
         for (int x = 0; x < 9; ++x){
             for (int y = 0; y < 9; ++y) {
@@ -168,6 +181,16 @@ int main()
         }
         titleText.drawTo(window);
         subText.drawTo(window);
+        // Loop for drawing all the level files
+        int i(0);
+        for (const auto& entry : fs::directory_iterator(levelPath)) {
+            TextWizard levelText(sf::Vector2f(dif / 2 + window_size.y, 320 + (60 * i)), 40, entry.path().string(), fonts[1]);
+            levelText.centerText(dif / 2);
+
+            levelText.drawTo(window);
+            ++i;
+        }
+
         window.display();
     }
 

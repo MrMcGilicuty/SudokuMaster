@@ -26,7 +26,12 @@ EditNumber::EditNumber(sf::Vector2f pos, int size, const std::string& fontFileLo
 
 void EditNumber::centerText(float width) {
     textWidth = newText.getLocalBounds().width;
-    newText.setPosition((width - textWidth) / 2 + position.x, position.y + 15);
+    if (getNumber() != 1) {
+        newText.setPosition((width - textWidth) / 2 + position.x, position.y + 10);
+    }
+    else {
+        newText.setPosition((width - textWidth) / 2 + position.x - 23, position.y + 13);
+    }
 }
 
 void EditNumber::showHitBox(bool show) {
@@ -92,8 +97,9 @@ void EditNumber::deselect() {
 }
 
 int EditNumber::getNumber() {
-    std::string numString= newText.getString();
-    return std::stoi(numString);
+    std::string numString = newText.getString();
+    // Returns 0 if string is empty and the number if it's not
+    return (numString == "") ? 0 : std::stoi(numString);
 }
 
 sf::Vector2f EditNumber::getPosition() {

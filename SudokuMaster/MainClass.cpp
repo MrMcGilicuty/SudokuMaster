@@ -5,6 +5,7 @@
 #include <filesystem>
 #include "TextWizard.h"
 #include "EditNumber.h"
+#include "Button.h"
 namespace fs = std::filesystem;
 
 void dispose(std::vector<std::vector<EditNumber*>> numberCells, sf::RenderWindow &window) {
@@ -184,9 +185,16 @@ int main()
         // Loop for drawing all the level files
         int i(0);
         for (const auto& entry : fs::directory_iterator(levelPath)) {
-            TextWizard levelText(sf::Vector2f(dif / 2 + window_size.y, 320 + (60 * i)), 40, entry.path().string(), fonts[1]);
-            levelText.centerText(dif / 2);
+            Button levelText(sf::Vector2f(dif / 2 + window_size.y, 320 + (60 * i)), 40, fonts[1], false, 2.1f);
+            levelText.setString(entry.path().string());
 
+            levelText.addBackground(dif / 2 - 50, 50, sf::Color(0xAFAFAF99));
+
+            // This does all of the clicking detection and swapping colors by itself.
+            levelText.addClickBackground(event, window, false, sf::Color(0x9F9F9F99), sf::Color(0xAFAFAF99));
+
+            levelText.centerText(dif / 2);
+            levelText.drawBackgrounds(window);
             levelText.drawTo(window);
             ++i;
         }

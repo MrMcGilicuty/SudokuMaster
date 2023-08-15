@@ -25,14 +25,25 @@ public:
 	// Draws the Text to the given window (Required)
 	void drawTo(sf::RenderWindow& window);
 
-	// Returns True if the mouse is over the original object location
+	/* Returns True if the mouse is over the original object location
+	 \param length How large the Square bounding box of the text about the origin
+	 */
 	bool isMouseOver(sf::RenderWindow& window, float length);
+	/* Returns True if the mouse is over the original object location
+	 \param width How wide the bounding box of the button is
+	 \param height How tall the bounding box of the button is
+	 */
+	bool isMouseOver(sf::RenderWindow& window, float width, float height);
+	// Returns True if the mouse is over the original text object location
+	bool isMouseOver(sf::RenderWindow& window);
 	// Sets the current Text Object as selected
 	void select();
 	// Sets the current Text Object as not selected
 	void deselect();
 	// Returns the Number of the Text Object
 	int getNumber();
+	// Sets the String to the passed string
+	void setString(std::string string);
 	// Returns the position of the Text Object
 	sf::Vector2f getPosition();
 	// Returns the Height of the Text Object

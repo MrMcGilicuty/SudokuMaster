@@ -79,13 +79,41 @@ bool EditNumber::isMouseOver(sf::RenderWindow& window, float length) {
     float endPosX = posX + length;
     float endPosY = posY + length;
     
-    if (mouse.x > posX && mouse.x < endPosX && mouse.y > posY && mouse.y < endPosY) {
+    if (mouse.x > posX && mouse.x < endPosX && mouse.y > posY && mouse.y < endPosY)
         return true;
-    }
     else
-    {
         return false;
-    }
+    
+}
+
+bool EditNumber::isMouseOver(sf::RenderWindow& window, float width, float height) {
+    sf::Vector2i mouse = sf::Mouse::getPosition(window);
+
+    int posX = position.x;
+    int posY = position.y;
+
+    float endPosX = posX + width;
+    float endPosY = posY + height;
+
+    if (mouse.x > posX && mouse.x < endPosX && mouse.y > posY && mouse.y < endPosY)
+        return true;
+    else
+        return false;
+}
+
+bool EditNumber::isMouseOver(sf::RenderWindow& window) {
+    sf::Vector2i mouse = sf::Mouse::getPosition(window);
+
+    int posX = position.x;
+    int posY = position.y;
+
+    float endPosX = posX + newText.getLocalBounds().width;
+    float endPosY = posY + newText.getLocalBounds().height;
+
+    if (mouse.x > posX && mouse.x < endPosX && mouse.y > posY && mouse.y < endPosY)
+        return true;
+    else
+        return false;
 }
 
 void EditNumber::select() {
@@ -99,7 +127,12 @@ void EditNumber::deselect() {
 int EditNumber::getNumber() {
     std::string numString = newText.getString();
     // Returns 0 if string is empty and the number if it's not
-    return (numString == "") ? 0 : std::stoi(numString);
+    return (numString == "" || numString.find_first_of("qwertyuiopasdfghjklzxcvbnm./-") != std::string::npos) ? 0 : std::stoi(numString);
+}
+
+void EditNumber::setString(std::string string) {
+    text = string;
+    newText.setString(string);
 }
 
 sf::Vector2f EditNumber::getPosition() {

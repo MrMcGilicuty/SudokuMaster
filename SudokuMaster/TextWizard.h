@@ -21,9 +21,9 @@ public:
 	 \param window sf::RenderWindow to render the object to
 	 */
 	void drawTo(sf::RenderWindow& window);
+	// Sets the String
+	void setString(std::string string);
 
-	// Returns the Text of the Text Object
-	std::string getText(); 
 	// Returns the position of the Text Object
 	sf::Vector2f getPosition();
 	// Returns the Height of the Text Object

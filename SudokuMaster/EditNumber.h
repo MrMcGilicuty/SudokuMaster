@@ -46,10 +46,18 @@ public:
 	int getNumber();
 	// Sets the String to the passed string
 	void setString(std::string string);
+	// Sets the String to the passed string, also sets the style
+	void setString(std::string string, sf::Color color);
+	// Sets the Color of the Text
+	void setColor(sf::Color color);
 	// This is what notifies when you actually type something
 	void typedOn(sf::Event& event);
 	// Returns the ID of this Number Object
 	float getID();
+	// Turns off user input for this text object manually
+	void blockInput();
+	// Turns on user input for this text object manually
+	void allowInput();
 
 protected:
 	// Returns the position of the Text Object
@@ -72,6 +80,7 @@ protected:
 private:
 	sf::RectangleShape highlightShape;
 	bool highlight = false;
+	bool on = true;
 	sf::Vector2f position;
 };
 

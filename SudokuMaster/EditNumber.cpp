@@ -60,9 +60,9 @@ void EditNumber::drawShape(sf::RenderWindow& window, sf::Drawable& shape) {
 }
 
 void EditNumber::typedOn(sf::Event& event) {
-    if (selected) {
+    if (selected && on) {
         int charTyped = event.text.unicode;
-        if (charTyped > 48 && charTyped < 58 || charTyped == BACKSPACE_KEY || charTyped == ESCAPE_KEY) {
+        if (charTyped > '0' && charTyped <= '9' || charTyped == BACKSPACE_KEY || charTyped == ESCAPE_KEY) {
             if (charTyped == BACKSPACE_KEY) {
                 text = "";
                 newText.setString(text);
@@ -137,6 +137,20 @@ int EditNumber::getNumber() {
 void EditNumber::setString(std::string string) {
     text = string;
     newText.setString(string);
+    textWidth = newText.getLocalBounds().width;
+    textHeight = newText.getGlobalBounds().height;
+}
+
+void EditNumber::setString(std::string string, sf::Color color) {
+    text = string;
+    newText.setFillColor(color);
+    newText.setString(string); 
+    textWidth = newText.getLocalBounds().width;
+    textHeight = newText.getGlobalBounds().height;
+}
+
+void EditNumber::setColor(sf::Color color) {
+    newText.setFillColor(color);
 }
 
 sf::Vector2f EditNumber::getPosition() {
@@ -144,11 +158,11 @@ sf::Vector2f EditNumber::getPosition() {
 }
 
 float EditNumber::getHeight() {
-    return newText.getLocalBounds().height;
+    return newText.getGlobalBounds().height;
 }
 
 float EditNumber::getWidth() {
-    return newText.getLocalBounds().width;
+    return newText.getGlobalBounds().width;
 }
 
 float EditNumber::getID() {
@@ -164,4 +178,12 @@ void EditNumber::inputLogic(int charTyped) {
         showHitBox(false);
         selected = false;
     }
+}
+
+void EditNumber::blockInput() {
+    on = false;
+}
+
+void EditNumber::allowInput() {
+    on = true;
 }

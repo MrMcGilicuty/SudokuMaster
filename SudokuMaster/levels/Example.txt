@@ -1,32 +1,55 @@
-#spaces are purely cosmetical, commas indicate the end of a row, but are not needed.
+#spaces are purely cosmetical, commas are also cosmetical, you could theoretically just input 81 numbers
+in a row and it would work the same way.
 Comments are multiline and only end once you close with a #
 
 Although; you don't need to use comments to add text, it will skip over anything that
-isn't a number automatically, so you only need to use comments if you want to include numbers i.e 
-These numbers are not included in the puzzle #13098718-434235#
+isn't a number automatically, so you only need to use comments if you want to include numbers or the win symbol i.e 
+These numbers are not included in the puzzle # 13098718 = 434235 #
+
+To define the solution use the Equals sign, It Has to be after setting the board.
+Also Make sure that the numbers in the preset board match those in the solution. If they don't match perfectly
+it will not be possible to complete.
 
 # EXAMPLE EMPTY BOARD SETTING
-000  000  000,
-000  000  000,
-000  000  000,
+000  000  000
+000  000  000
+000  000  000
 
-000  000  000,
-000  000  000,
-000  000  000,
+000  000  000
+000  000  000
+000  000  000
 
-000  000  000,
-000  000  000,
-000  000  000,
+000  000  000
+000  000  000
+000  000  000
 #
 
 123  456  007,
 000  000  100,
-987  000  040
+987  000  040,
   		
 040  007  306
 070  320  000
 369  008  010
   		
-002  100  009,
-000  700  081,
-450  030  700,
+002  100  009
+000  700  081
+450  030  700
+
+= 
+
+#
+THERE CANNOT BE ZEROS IN THE SOLUTION IT WILL YELL AT YOU
+#
+
+123  456  777,
+777  777  177,
+987  777  747,
+  		
+747  777  376
+777  327  777
+369  778  717
+  		
+772  177  779
+777  777  781
+457  737  777

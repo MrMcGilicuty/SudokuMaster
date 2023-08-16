@@ -9,8 +9,8 @@
 #include "EditNumber.h"
 #include "Button.h"
 namespace fs = std::filesystem;
-
 #define COMMENT '#' // This defines the comment symbol used in the custom level files can be anything besides numbers, commas, or spaces
+#define SOLUTION '=' // This defines the Solution symbol used in the custom level files that tells the reader to start loading the solution
 
 void dispose(std::vector<std::vector<EditNumber*>> numberCells, sf::RenderWindow &window) {
     // Clean up memory before exiting
@@ -39,15 +39,17 @@ std::vector<std::vector<int>> loadSudokuFile(std::string fileName) {
     int i(0); // Index
     // Cycles through every character in the file printing out every number
     while (sudokuFile.get(ch)) {
-        if (ch == COMMENT && !commentStart) {
+        if (ch == COMMENT && !commentStart)
             commentStart = true;
-        }
-        else if (ch == COMMENT && commentStart) {
+        else if (ch == COMMENT && commentStart) 
             commentStart = false;
-        }
-        if (ch != COMMENT && commentStart == false) {
+        
+        // If you are not in a comment then check for numbers
+        if (!commentStart) {
             if (ch >= '0' && ch <= '9') {
+                // Subtract the unicode value to get the actual value as an integer
                 int charNum = ch - '0';
+                // Every 9 numbers push back 1 row
                 if (i % 9 != 0 || i == 0) {
                     row.push_back(charNum);
                     i++;
@@ -64,10 +66,71 @@ std::vector<std::vector<int>> loadSudokuFile(std::string fileName) {
             
         }
     }
-    boardNums.push_back(row);
     std::cout << std::endl;
+    boardNums.push_back(row);
     sudokuFile.close();
     return boardNums;
+}
+
+std::vector<std::vector<int>> loadSudokuSolution(std::string fileName) {
+    bool commentStart = false; // Bool for opening/closing comments
+    bool solutionStart = false; // Bool for starting the solution
+    std::ifstream sudokuFile(fileName); // Loads the file
+    // If the file doesn't load it notifies you
+    if (!sudokuFile.is_open()) {
+        std::cout << "Failed to open the file!" << std::endl;
+    }
+
+    char ch;
+    std::vector<std::vector<int>> solutionNums; // The Vector that will hold the starting board position
+    std::vector<int> row; // Row vector
+    int i(0); // Index
+    // Cycles through every character in the file printing out every number
+    while (sudokuFile.get(ch)) {
+        // Starts the comment
+        if (ch == COMMENT && !commentStart) 
+            commentStart = true;
+        // Ends the comment
+        else if (ch == COMMENT && commentStart) 
+            commentStart = false;
+        // Starts Solution
+        if (ch == SOLUTION && !commentStart)
+            solutionStart = true;
+        // If you are not in a comment and you have reached the Solution Symbol then check for numbers
+        if (solutionStart && !commentStart) {
+            if (ch >= '0' && ch <= '9') {
+                // If there is a zero in the solution it will Error, and the solution will be scrapped
+                if (ch == '0') {
+                    std::cout << "Error: No Zeros are alloud in the solution.\n";
+                    solutionStart = false;
+                    break;
+                }
+                // Subtract the unicode value to get the actual value as an integer
+                int charNum = ch - '0';
+                // Every 9 numbers push back 1 row
+                if (i % 9 != 0 || i == 0) {
+                    row.push_back(charNum);
+                    i++;
+                }
+                else {
+                    std::cout << std::endl;
+                    solutionNums.push_back(row);
+                    row.clear();
+                    row.push_back(charNum);
+                    i++;
+                }
+                std::cout << ch;
+            }
+
+        }
+    }
+    if (!solutionStart) {
+        std::cout << "No Solution avaliable.\n";
+    }
+    std::cout << std::endl;
+    solutionNums.push_back(row);
+    sudokuFile.close();
+    return solutionNums;
 }
 
 int main()
@@ -167,24 +230,54 @@ int main()
         numberCells.push_back(row);
     }
 
-    auto holdingCells = [&numberCells, &mode](std::string fileName) {
+    auto checkCells = [&numberCells](std::string fileName) {
+        std::vector<std::vector<int>> solutionVector = loadSudokuSolution(fileName);
         std::vector<std::vector<int>> boardVector = loadSudokuFile(fileName);
-        mode = "Preset";
-        int x(9);
+        int x(0);
         int y(0);
         for (std::vector<EditNumber*>& row : numberCells) {
             y = 0;
             for (EditNumber* cellTextNum : row) {
-                if (boardVector[x][y] == 0) {
-                    cellTextNum->setString("");
-                }
-                else
-                {                
-                    cellTextNum->setString(std::to_string(boardVector[x][y]));
+                int cell = cellTextNum->getNumber();
+                int solCell = solutionVector[y][x];
+                int presetCell = boardVector[y][x];
+                if (presetCell != solCell) {
+                    if (cell == solCell) {
+                        cellTextNum->setColor(sf::Color(0x20D820FF));
+                    }
+                    else
+                    {
+                        cellTextNum->setColor(sf::Color::Red);
+                    }
                 }
                 y++;
             }
-            x--;
+            x++;
+        }
+    };
+    Button checkSol(sf::Vector2f(0, 1210), 60, fonts[1], false, 4.0f, checkCells);
+
+    auto loadCells = [&numberCells, &mode, &checkSol](std::string fileName) {
+        std::vector<std::vector<int>> boardVector = loadSudokuFile(fileName);
+        checkSol.baseFile = fileName; // Setting the check button's file
+        mode = "Preset";
+        int x(0);
+        int y(0);
+        for (std::vector<EditNumber*>& row : numberCells) {
+            y = 0;
+            for (EditNumber* cellTextNum : row) {
+                if (boardVector[y][x] == 0) {
+                    cellTextNum->allowInput();
+                    cellTextNum->setString("", sf::Color(0xE9EB76FF));
+                }
+                else
+                {
+                    cellTextNum->blockInput(); // Turns off user input if it is generated by the map
+                    cellTextNum->setString(std::to_string(boardVector[y][x]), sf::Color::Black);
+                }
+                y++;
+            }
+            x++;
         }
     };
 
@@ -229,6 +322,17 @@ int main()
         window.draw(boardEdge);
         window.draw(barLeft);
         window.draw(barRight);
+        // Draws the green button
+        checkSol.setString("Check Solution");
+        checkSol.blockInput();
+
+        checkSol.centerText(dif / 2);
+        checkSol.addBackground(dif / 2 - 100, 100);
+        checkSol.addClickBackground(event, window, false, sf::Color(0x109830FF), sf::Color(0x20D820FF));
+        checkSol.drawBack(window);
+        checkSol.drawTo(window);
+
+        modeText.setString(mode + " Mode");
         modeText.drawTo(window);
         levelText.drawTo(window);
         // Loop for drawing the smaller cells
@@ -255,9 +359,21 @@ int main()
         // Loop for drawing all the level files
         int i(0);
         for (const auto& entry : fs::directory_iterator(levelPath)) {
-            Button levelText(sf::Vector2f(dif / 2 + window_size.y, 320 + (80 * i)), 40, fonts[1], false, 2.1f, holdingCells);
+            Button levelText(sf::Vector2f(dif / 2 + window_size.y, 320 + (80 * i)), 40, fonts[1], false, 2.1f, loadCells);
 
-            levelText.setString(entry.path().string());
+            levelText.baseFile = entry.path().string(); // Sets the filename
+
+            // Removes the path and suffix from the text to just get the name of the file
+            std::string finalString = entry.path().string();
+            std::string path = "levels/";
+            std::string suffix = ".txt";
+            finalString.erase(0, path.length());
+
+            std::string::size_type j = finalString.find(suffix);
+            if (j != std::string::npos)
+                finalString.erase(j, suffix.length());
+
+            levelText.setString(finalString);
             levelText.centerText(dif / 2);
             levelText.addBackground(dif / 2 - 50, 50, sf::Color(0xAFAFAF99));
 

@@ -23,6 +23,10 @@ void TextWizard::centerText(float width) {
     newText.setPosition((width - text.x) / 2 + position.x, position.y);
 }
 
+void TextWizard::setString(std::string string) {
+    newText.setString(string);
+}
+
 void TextWizard::highlightText(sf::Color color) {
     highlight = true;
     highlightShape.setPosition(newText.getPosition().x + 4, newText.getPosition().y + 12);
@@ -35,10 +39,6 @@ void TextWizard::drawTo(sf::RenderWindow& window) {
         window.draw(highlightShape);
     }
     window.draw(newText);
-}
-
-std::string TextWizard::getText() {
-    return newText.getString();
 }
 
 sf::Vector2f TextWizard::getPosition() {

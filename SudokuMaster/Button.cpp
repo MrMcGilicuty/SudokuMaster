@@ -1,8 +1,8 @@
 #include "Button.h"
 #include <iostream>
 
-Button::Button(sf::Vector2f pos, int size, const std::string& fontFileLoc, bool sel, float ID, std::function<void(std::string)> cb, sf::Color color)
-    : EditNumber(pos, size, fontFileLoc, sel, ID, color), callback(cb) {
+Button::Button(sf::Vector2f pos, int size, const std::string& fontFileLoc, bool sel, float ID, std::function<void(std::string)> clickCallback, sf::Color color)
+    : EditNumber(pos, size, fontFileLoc, sel, ID, color), callback(clickCallback) {
     newText.setFont(newFont);
     newText.setPosition(pos);
     newText.setCharacterSize(size);
@@ -14,7 +14,7 @@ Button::Button(sf::Vector2f pos, int size, const std::string& fontFileLoc, bool 
 
     newText.setString(text);
     textWidth = newText.getLocalBounds().width;
-    textHeight = newText.getLocalBounds().height + 50;
+    textHeight = newText.getGlobalBounds().height;
     selected = sel;
     CNID = ID;
 }
@@ -23,7 +23,7 @@ void Button::addBackground(int width, int height, sf::Color color) {
     backWidth = width; // Initialize backWidth with the provided width
     backHeight = height; // Initialize backHeight with the provided height
     const float xPos = newText.getPosition().x - abs(width - textWidth) / 2;
-    const float yPos = newText.getPosition().y - abs(height - textHeight) / 2;
+    const float yPos = newText.getPosition().y - abs(height - textHeight * 2) / 2;
 
     background.setPosition(xPos, yPos);
     background.setFillColor(color);
@@ -32,7 +32,7 @@ void Button::addBackground(int width, int height, sf::Color color) {
 
 void Button::addClickBackground(sf::Event& event, sf::RenderWindow& window, bool hold, int width, int height, sf::Color pressColor, sf::Color releaseColor) {
     const float xPos = newText.getPosition().x - abs(width - textWidth) / 2;
-    const float yPos = newText.getPosition().y - abs(height - textHeight) / 2;
+    const float yPos = newText.getPosition().y - abs(height - textHeight * 2) / 2;
 
     clickBackground.setSize(sf::Vector2f(width, height));
     clickBackground.setPosition(xPos, yPos);
@@ -40,7 +40,7 @@ void Button::addClickBackground(sf::Event& event, sf::RenderWindow& window, bool
 
     if (event.type == event.MouseButtonPressed && isMouseOver(window, width, height)) {
         clickBackground.setFillColor(pressColor);
-        callback(newText.getString());
+        callback(Button::baseFile);
     }
     else if (event.type == event.MouseButtonReleased && !hold) {
         clickBackground.setFillColor(releaseColor);
@@ -54,7 +54,7 @@ void Button::addClickBackground(sf::Event& event, sf::RenderWindow& window, bool
     const float width = backWidth;
     const float height = backHeight;
     const float xPos = newText.getPosition().x - abs(width - textWidth) / 2;
-    const float yPos = newText.getPosition().y - abs(height - textHeight) / 2;
+    const float yPos = newText.getPosition().y - abs(height - textHeight * 2) / 2;
 
     clickBackground.setSize(sf::Vector2f(width, height));
     clickBackground.setPosition(xPos, yPos);
@@ -65,7 +65,7 @@ void Button::addClickBackground(sf::Event& event, sf::RenderWindow& window, bool
 
     if (event.type == event.MouseButtonPressed && isMouseOver(window, width, height)) {
         clickBackground.setFillColor(pressColor);
-        callback(newText.getString());
+        callback(Button::baseFile);
     }
     else if (event.type == event.MouseButtonReleased && !hold) {
         clickBackground.setFillColor(releaseColor);

@@ -7,7 +7,7 @@ class Button : public EditNumber {
 public:
 
 	// Setting Constructor values for derived class
-	Button(sf::Vector2f pos, int size, const std::string& fontFileLoc, bool sel, float ID, std::function<void(std::string)> cb, sf::Color color = sf::Color::Black);
+	Button(sf::Vector2f pos, int size, const std::string& fontFileLoc, bool sel, float ID, std::function<void(std::string)> clickCallback, sf::Color color = sf::Color::Black);
 
 	/*
 	* Adds a background with a color; the default color is white
@@ -67,8 +67,9 @@ public:
 	// Draws the backgrounds
 	void drawBack(sf::RenderWindow& window);
 
+	std::string baseFile = "";
 private:
-	std::function<void(std::string)> callback;
+	std::function<void(std::string)> callback; // Callback function
 
 	// Initialization of values
 	sf::RectangleShape background;

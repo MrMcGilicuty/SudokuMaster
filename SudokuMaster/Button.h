@@ -1,14 +1,13 @@
 #pragma once
 #include "EditNumber.h"
 #include <SFML/Graphics.hpp>
+#include <functional>
+
 class Button : public EditNumber {
 public:
 
-	// Setting Constructor values for parent class
-	Button(sf::Vector2f pos, int size, const std::string& fontFileLoc, bool sel, float ID, sf::Color color = sf::Color::Black) 
-		: EditNumber(pos, size, fontFileLoc, sel, ID, color) {
-	
-	}
+	// Setting Constructor values for derived class
+	Button(sf::Vector2f pos, int size, const std::string& fontFileLoc, bool sel, float ID, std::function<void(std::string)> cb, sf::Color color = sf::Color::Black);
 
 	/*
 	* Adds a background with a color; the default color is white
@@ -65,19 +64,16 @@ public:
 	 */
 	bool isMouseOver(sf::RenderWindow& window);
 
-	// Draws the background if you've created it. Nothing will happen if you haven't created the background
-	void drawBackground(sf::RenderWindow& window);
-	// Draws both backgrounds if you've created them. Nothing will happen if you haven't created the backgrounds
-	void drawBackgrounds(sf::RenderWindow& window);
+	// Draws the backgrounds
+	void drawBack(sf::RenderWindow& window);
+
 private:
+	std::function<void(std::string)> callback;
+
 	// Initialization of values
-	sf::Text newText;
-	sf::Font newFont;
 	sf::RectangleShape background;
 	sf::RectangleShape clickBackground;
 	float backWidth = 0;
 	float backHeight = 0;
 	float CNID = 1.01;
-	bool highlight = false;
-	sf::Vector2f position;
 };

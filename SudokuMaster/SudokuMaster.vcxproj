@@ -155,6 +155,11 @@
     <Font Include="resources\Caviar Dreams Bold.ttf" />
     <Font Include="resources\data-latin.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="levels\Example.txt" />
+    <Text Include="levels\Level1.txt" />
+    <Text Include="levels\newLevel.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -1,0 +1,32 @@
+#spaces are purely cosmetical, commas indicate the end of a row, but are not needed.
+Comments are multiline and only end once you close with a #
+
+Although; you don't need to use comments to add text, it will skip over anything that
+isn't a number automatically, so you only need to use comments if you want to include numbers i.e 
+These numbers are not included in the puzzle #13098718-434235#
+
+# EXAMPLE EMPTY BOARD SETTING
+000  000  000,
+000  000  000,
+000  000  000,
+
+000  000  000,
+000  000  000,
+000  000  000,
+
+000  000  000,
+000  000  000,
+000  000  000,
+#
+
+123  456  007,
+000  000  100,
+987  000  040
+  		
+040  007  306
+070  320  000
+369  008  010
+  		
+002  100  009,
+000  700  081,
+450  030  700,

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="levels">
+      <UniqueIdentifier>{7b993ef8-e772-475a-8834-19faf5e4104a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainClass.cpp">
@@ -46,5 +49,16 @@
     <Font Include="resources\data-latin.ttf">
       <Filter>Resource Files</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="levels\newLevel.txt">
+      <Filter>levels</Filter>
+    </Text>
+    <Text Include="levels\Level1.txt">
+      <Filter>levels</Filter>
+    </Text>
+    <Text Include="levels\Example.txt">
+      <Filter>levels</Filter>
+    </Text>
   </ItemGroup>
 </Project>

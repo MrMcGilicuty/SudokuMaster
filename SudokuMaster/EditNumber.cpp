@@ -25,7 +25,7 @@ EditNumber::EditNumber(sf::Vector2f pos, int size, const std::string& fontFileLo
 }
 
 void EditNumber::centerText(float width) {
-    textWidth = newText.getLocalBounds().width;
+    textWidth = getWidth();
     if (getNumber() != 1) {
         newText.setPosition((width - textWidth) / 2 + position.x, position.y + 10);
     }
@@ -53,6 +53,10 @@ void EditNumber::drawTo(sf::RenderWindow& window) {
         window.draw(highlightShape);
     }
     window.draw(newText);
+}
+
+void EditNumber::drawShape(sf::RenderWindow& window, sf::Drawable& shape) {
+    window.draw(shape);
 }
 
 void EditNumber::typedOn(sf::Event& event) {

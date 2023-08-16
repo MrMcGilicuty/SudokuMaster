@@ -1,12 +1,16 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <functional>
 #include <string>
 #include <vector>
-#include <filesystem>
 #include "TextWizard.h"
 #include "EditNumber.h"
 #include "Button.h"
 namespace fs = std::filesystem;
+
+#define COMMENT '#' // This defines the comment symbol used in the custom level files can be anything besides numbers, commas, or spaces
 
 void dispose(std::vector<std::vector<EditNumber*>> numberCells, sf::RenderWindow &window) {
     // Clean up memory before exiting
@@ -19,6 +23,51 @@ void dispose(std::vector<std::vector<EditNumber*>> numberCells, sf::RenderWindow
     // Clear the numberCells vector
     numberCells.clear();
     window.close();
+}
+
+std::vector<std::vector<int>> loadSudokuFile(std::string fileName) {
+    bool commentStart = false; // Bool for opening/closing comments
+    std::ifstream sudokuFile(fileName); // Loads the file
+    // If the file doesn't load it notifies you
+    if (!sudokuFile.is_open()) {
+        std::cout << "Failed to open the file!" << std::endl;
+    }
+
+    char ch;
+    std::vector<std::vector<int>> boardNums; // The Vector that will hold the starting board position
+    std::vector<int> row; // Row vector
+    int i(0); // Index
+    // Cycles through every character in the file printing out every number
+    while (sudokuFile.get(ch)) {
+        if (ch == COMMENT && !commentStart) {
+            commentStart = true;
+        }
+        else if (ch == COMMENT && commentStart) {
+            commentStart = false;
+        }
+        if (ch != COMMENT && commentStart == false) {
+            if (ch >= '0' && ch <= '9') {
+                int charNum = ch - '0';
+                if (i % 9 != 0 || i == 0) {
+                    row.push_back(charNum);
+                    i++;
+                }
+                else {
+                    std::cout << std::endl;
+                    boardNums.push_back(row);
+                    row.clear();
+                    row.push_back(charNum);
+                    i++;
+                }
+                std::cout << ch;
+            }
+            
+        }
+    }
+    boardNums.push_back(row);
+    std::cout << std::endl;
+    sudokuFile.close();
+    return boardNums;
 }
 
 int main()
@@ -118,6 +167,27 @@ int main()
         numberCells.push_back(row);
     }
 
+    auto holdingCells = [&numberCells, &mode](std::string fileName) {
+        std::vector<std::vector<int>> boardVector = loadSudokuFile(fileName);
+        mode = "Preset";
+        int x(9);
+        int y(0);
+        for (std::vector<EditNumber*>& row : numberCells) {
+            y = 0;
+            for (EditNumber* cellTextNum : row) {
+                if (boardVector[x][y] == 0) {
+                    cellTextNum->setString("");
+                }
+                else
+                {                
+                    cellTextNum->setString(std::to_string(boardVector[x][y]));
+                }
+                y++;
+            }
+            x--;
+        }
+    };
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -185,16 +255,17 @@ int main()
         // Loop for drawing all the level files
         int i(0);
         for (const auto& entry : fs::directory_iterator(levelPath)) {
-            Button levelText(sf::Vector2f(dif / 2 + window_size.y, 320 + (60 * i)), 40, fonts[1], false, 2.1f);
-            levelText.setString(entry.path().string());
+            Button levelText(sf::Vector2f(dif / 2 + window_size.y, 320 + (80 * i)), 40, fonts[1], false, 2.1f, holdingCells);
 
+            levelText.setString(entry.path().string());
+            levelText.centerText(dif / 2);
             levelText.addBackground(dif / 2 - 50, 50, sf::Color(0xAFAFAF99));
 
             // This does all of the clicking detection and swapping colors by itself.
-            levelText.addClickBackground(event, window, false, sf::Color(0x9F9F9F99), sf::Color(0xAFAFAF99));
+            levelText.addClickBackground(event, window, false, sf::Color(0x7F7F7Fff), sf::Color(0xAFAFAF99));
 
-            levelText.centerText(dif / 2);
-            levelText.drawBackgrounds(window);
+            
+            levelText.drawBack(window);
             levelText.drawTo(window);
             ++i;
         }

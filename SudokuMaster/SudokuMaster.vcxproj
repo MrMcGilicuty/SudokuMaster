@@ -144,11 +144,13 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="EditNumber.cpp" />
     <ClCompile Include="MainClass.cpp" />
+    <ClCompile Include="SudokuDLXMatrix.cpp" />
     <ClCompile Include="TextWizard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="EditNumber.h" />
+    <ClInclude Include="SudokuDLXMatrix.h" />
     <ClInclude Include="TextWizard.h" />
   </ItemGroup>
   <ItemGroup>

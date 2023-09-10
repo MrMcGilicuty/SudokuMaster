@@ -230,6 +230,7 @@ int main()
         numberCells.push_back(row);
     }
 
+    // Lambda for checking the cells with the solution in the file
     auto checkCells = [&numberCells](std::string fileName) {
         std::vector<std::vector<int>> solutionVector = loadSudokuSolution(fileName);
         std::vector<std::vector<int>> boardVector = loadSudokuFile(fileName);
@@ -241,13 +242,16 @@ int main()
                 int cell = cellTextNum->getNumber();
                 int solCell = solutionVector[y][x];
                 int presetCell = boardVector[y][x];
+
                 if (presetCell != solCell) {
+
                     if (cell == solCell) {
                         cellTextNum->setColor(sf::Color(0x20D820FF));
                     }
                     else
                     {
-                        cellTextNum->setColor(sf::Color::Red);
+                        if (cell != 0)
+                            cellTextNum->setColor(sf::Color::Red);
                     }
                 }
                 y++;
@@ -257,6 +261,7 @@ int main()
     };
     Button checkSol(sf::Vector2f(0, 1210), 60, fonts[1], false, 4.0f, checkCells);
 
+    // Lambda for Loading the cells in when you press a level button
     auto loadCells = [&numberCells, &mode, &checkSol](std::string fileName) {
         std::vector<std::vector<int>> boardVector = loadSudokuFile(fileName);
         checkSol.baseFile = fileName; // Setting the check button's file
@@ -281,6 +286,7 @@ int main()
         }
     };
 
+    // Draw Loop
     while (window.isOpen())
     {
         sf::Event event;

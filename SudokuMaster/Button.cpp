@@ -3,6 +3,7 @@
 
 Button::Button(sf::Vector2f pos, int size, const std::string& fontFileLoc, bool sel, float ID, std::function<void(std::string)> clickCallback, sf::Color color)
     : EditNumber(pos, size, fontFileLoc, sel, ID, color), callback(clickCallback) {
+
     newText.setFont(newFont);
     newText.setPosition(pos);
     newText.setCharacterSize(size);
@@ -38,13 +39,16 @@ void Button::addClickBackground(sf::Event& event, sf::RenderWindow& window, bool
     clickBackground.setPosition(xPos, yPos);
     clickBackground.setFillColor(releaseColor);
 
+    // If the Button is clicked
     if (event.type == event.MouseButtonPressed && isMouseOver(window, width, height)) {
         clickBackground.setFillColor(pressColor);
-        callback(Button::baseFile);
+        callback(baseFile);
     }
+    // If the Button is not clicked
     else if (event.type == event.MouseButtonReleased && !hold) {
         clickBackground.setFillColor(releaseColor);
     }
+    // If the Button is not clicked
     else if (event.type == event.MouseButtonPressed && !isMouseOver(window, width, height)) {
         clickBackground.setFillColor(releaseColor);
     }
@@ -62,20 +66,22 @@ void Button::addClickBackground(sf::Event& event, sf::RenderWindow& window, bool
     clickBackground.setOutlineThickness(3.0f);
     clickBackground.setOutlineColor(sf::Color::Black);
 
-
+    // If the Button is clicked
     if (event.type == event.MouseButtonPressed && isMouseOver(window, width, height)) {
         clickBackground.setFillColor(pressColor);
-        callback(Button::baseFile);
+        callback(baseFile);
     }
+    // If the Button is not clicked
     else if (event.type == event.MouseButtonReleased && !hold) {
         clickBackground.setFillColor(releaseColor);
     }
+    // If the Button is not clicked
     else if (event.type == event.MouseButtonPressed && !isMouseOver(window, width, height)) {
         clickBackground.setFillColor(releaseColor);
     }
 }
 
-bool Button::isMouseOver(sf::RenderWindow& window, float width, float height) {
+bool Button::isMouseOver(sf::RenderWindow &window, float width, float height) {
     sf::Vector2i mouse = sf::Mouse::getPosition(window);
 
     int posX = clickBackground.getPosition().x;
@@ -84,6 +90,7 @@ bool Button::isMouseOver(sf::RenderWindow& window, float width, float height) {
     float endPosX = posX + width;
     float endPosY = posY + height;
 
+    // Returns True if the mouse is hovering over a custom bounding box
     if (mouse.x > posX && mouse.x < endPosX && mouse.y > posY && mouse.y < endPosY) {
         select();
         return true;
@@ -106,6 +113,7 @@ bool Button::isMouseOver(sf::RenderWindow& window) {
     float endPosX = posX + width;
     float endPosY = posY + height;
 
+    // Returns True if the mouse is hovering over the button
     if (mouse.x > posX && mouse.x < endPosX && mouse.y > posY && mouse.y < endPosY) {
         select();
         return true;

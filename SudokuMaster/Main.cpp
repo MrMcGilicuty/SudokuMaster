@@ -8,6 +8,7 @@
 #include "TextWizard.h"
 #include "EditNumber.h"
 #include "Button.h"
+#include "SudokuDLXMatrix.h"
 namespace fs = std::filesystem;
 #define COMMENT '#' // This defines the comment symbol used in the custom level files can be anything besides numbers, commas, or spaces
 #define SOLUTION '=' // This defines the Solution symbol used in the custom level files that tells the reader to start loading the solution

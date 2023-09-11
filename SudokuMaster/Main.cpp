@@ -5,6 +5,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include <memory>
 #include "TextWizard.h"
 #include "EditNumber.h"
 #include "Button.h"
@@ -286,6 +287,16 @@ int main()
             x++;
         }
     };
+    
+    SudokuDLXMatrix matrixMaker;
+    std::vector<std::vector<bool>> boolMatrix = matrixMaker.createBoolMatrix();
+    std::cout << "\n";
+    for (const auto& rows : boolMatrix) {
+        for (const auto& num : rows) {
+            num ? std::cout << num : std::cout << " ";
+        }
+        std::cout << "\n";
+    }
 
     // Draw Loop
     while (window.isOpen())

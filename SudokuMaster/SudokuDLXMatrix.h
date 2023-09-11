@@ -1,22 +1,34 @@
 #pragma once
+#include "DLXNode.h"
+#include <iostream>
+#include <memory>
+#include <vector>
+
+using namespace std;
+
 class SudokuDLXMatrix
 {
 public:
+	SudokuDLXMatrix();
 
-	// 
-	void createDLXPreset();
+	// Function that creates the whole preset matrix
+	vector<vector<bool>> createBoolMatrix();
 
-	void createHeaders();
+	
 
 private:
-
 	// Vectors for the different constraints
-	vector<DLXNode> headers;
-	vector<DLXNode> cellConstraint;
-	vector<DLXNode> rowConstraint;
-	vector<DLXNode> colConstraint;
-	vector<DLXNode> boxConstraint;
+	vector<shared_ptr<DLXNode>> headers;
+	vector<shared_ptr<DLXNode>> cellConstraint;
+	vector<shared_ptr<DLXNode>> rowConstraint;
+	vector<shared_ptr<DLXNode>> colConstraint;
+	vector<shared_ptr<DLXNode>> boxConstraint;
 
-	vector<vector<DLXNode>> presetDLXMatrix;
+	vector<vector<shared_ptr<DLXNode>>> presetDLXMatrix;
+
+	vector<bool> row;
+	vector<vector<bool>> boolMatrix;
+	// Function for creating the headers for the matrix
+	void createHeaders();
 };
 

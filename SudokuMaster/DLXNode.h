@@ -11,8 +11,11 @@ public:
 	std::shared_ptr<DLXNode> down;
 
 	
-	
-	int num = 0;
-	bool header = 0;
+	void setRow(int _row);
+	int getRow();
 
+	int ID;
+	bool header = false;
+private:
+	int row;
 };

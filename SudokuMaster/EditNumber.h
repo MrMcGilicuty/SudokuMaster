@@ -77,10 +77,11 @@ protected:
 	bool selected = false;
 	float textWidth = 0;
 	float textHeight = 0;
+
 private:
+	sf::Vector2f position;
 	sf::RectangleShape highlightShape;
 	bool highlight = false;
 	bool on = true;
-	sf::Vector2f position;
 };
 

@@ -15,21 +15,22 @@ public:
 	// Function that creates the whole Boolean preset matrix
 	vector<vector<bool>> createBoolMatrix();
 
-	//
-	void createDLXMatrix(vector<vector<bool>> boolMatrix, vector<vector<EditNumber*>> currentBoard);
-
+	void solve();
 
 	vector<vector<shared_ptr<DLXNode>>> presetDLXMatrix;
 private:
 	// Vectors for the different constraints
 	vector<shared_ptr<DLXNode>> headers;
-	vector<shared_ptr<DLXNode>> cellConstraint;
-	vector<shared_ptr<DLXNode>> rowConstraint;
-	vector<shared_ptr<DLXNode>> colConstraint;
-	vector<shared_ptr<DLXNode>> boxConstraint;
+
+	vector<shared_ptr<DLXNode>> cRow;
+	vector<vector<shared_ptr<DLXNode>>> constraints;
 
 	vector<bool> row;
 	vector<vector<bool>> boolMatrix;
+
+	//
+	void createDLXMatrix();
+
 	// Function for creating the headers for the matrix
 	void createHeaders();
 };

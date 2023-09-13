@@ -15,6 +15,7 @@ public:
 	int getRow();
 
 	int ID;
+	bool one;
 	bool header = false;
 private:
 	int row;

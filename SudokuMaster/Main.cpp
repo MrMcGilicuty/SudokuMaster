@@ -299,7 +299,7 @@ int main()
         std::cout << "\n";
     }*/
 
-    matrixMaker.createDLXMatrix(matrixMaker.createBoolMatrix(), numberCells);
+    matrixMaker.solve();
 
     // Draw Loop
     while (window.isOpen())

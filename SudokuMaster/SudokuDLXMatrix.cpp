@@ -81,15 +81,88 @@ vector<vector<bool>> SudokuDLXMatrix::createBoolMatrix() {
 	return boolMatrix;
 }
 
-void SudokuDLXMatrix::createDLXMatrix(vector<vector<bool>> boolMatrix, vector<vector<EditNumber*>> currentBoard) {
+void SudokuDLXMatrix::solve() {
+	createDLXMatrix();
+}
+
+void SudokuDLXMatrix::createDLXMatrix() {
 
 	createHeaders();
 
+	const vector<vector<bool>> boolMatrix = createBoolMatrix();
+	int i = 0, j = 0;
+
+	for (const auto& rows : boolMatrix) {
+
+		for (const bool& num : rows) {
+			DLXNode node;
+			// The first time through a row
+			if (!j) {
+				node.setRow(i);
+				num ? node.one = 1 : node.one = 0;
+
+				// If this is the first row
+				if (!i) {
+					// Set the up/down
+					node.up   = headers[0];
+					node.down = headers[0];
+					headers[0]->up   = make_shared<DLXNode>(node);
+					headers[0]->down = make_shared<DLXNode>(node);
+				}
+				// Gaurenteed to have an up value if it's not the first row
+				else {
+					node.up   = constraints[i - 1][j];
+					node.down = headers[j];
+					constraints[i - 1][j]->down = make_shared<DLXNode>(node);
+
+				}
+			}
+			else {
+				
+				node.setRow(i);
+				num ? node.one = 1 : node.one = 0;
+
+				// Gaurenteed to have a left value if it's not the first time
+				node.left  = cRow[j - 1];
+				node.right = cRow[0];
+				cRow[j - 1]->right = make_shared<DLXNode>(node);
+				cRow[0]->left      = make_shared<DLXNode>(node);
+
+				// If this is the first row
+				if (!i) {
+					// Set the up/down
+					node.up   = headers[j];
+					node.down = headers[j];
+					headers[j]->up   = make_shared<DLXNode>(node);
+					headers[j]->down = make_shared<DLXNode>(node);
+				}
+				// Gaurenteed to have an up value if it's not the first row
+				else {
+					node.up = constraints[i - 1][j];
+					node.down = headers[j];
+					constraints[i - 1][j]->down = make_shared<DLXNode>(node);
+				}
+
+				
+
+				
+			}
+			cRow.push_back(make_shared<DLXNode>(node));
+			j++;
+		}
+		constraints.push_back(cRow);
+		cRow.clear();
+		i++;
+		j = 0;
+	}
 }
 
 void SudokuDLXMatrix::createHeaders() {
 
 	DLXNode head;
+	head.header = true;
+	head.setRow(0);
+	head.ID = 0;
 	for (int i(0); i < 323; i++) {
 		DLXNode node;
 		node.header = true;
@@ -98,9 +171,6 @@ void SudokuDLXMatrix::createHeaders() {
 
 		// First time
 		if (!i) {
-			head.header = true;
-			head.setRow(0);
-			head.ID = 0;
 			headers.push_back(make_shared<DLXNode>(head));
 
 			node.left  = headers[0];
@@ -109,10 +179,10 @@ void SudokuDLXMatrix::createHeaders() {
 			headers[0]->left  = make_shared<DLXNode>(node);
 		}
 		else {
-			node.left = headers[i];
+			node.left  = headers[i];
 			node.right = headers[0];
 			headers[i]->right = make_shared<DLXNode>(node);
-			headers[0]->left = make_shared<DLXNode>(node);
+			headers[0]->left  = make_shared<DLXNode>(node);
 		}
 		headers.push_back(make_shared<DLXNode>(node));
 	}

@@ -19,9 +19,9 @@ public:
 
 	void uncover();
 
-	int ID = -1;
-	bool one = false;
-	bool header = false;
+	int ID;
+	bool one;
+	bool header;
 private:
-	int row = 0;
+	int row;
 };

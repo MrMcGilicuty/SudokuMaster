@@ -2,7 +2,10 @@
 #include <memory>
 
 DLXNode::DLXNode() {
-
+	ID = -1;
+	one = false;
+	header = false;
+	row = 0;
 }
 
 void DLXNode::setRow(int _row) {
@@ -26,3 +29,4 @@ void DLXNode::uncover() {
 	down->up    = std::make_shared<DLXNode>(this);
 	up->down    = std::make_shared<DLXNode>(this);
 }
+

@@ -81,22 +81,29 @@ vector<vector<bool>> SudokuDLXMatrix::createBoolMatrix() {
 	return boolMatrix;
 }
 
-void SudokuDLXMatrix::solve() {
+void SudokuDLXMatrix::solve(std::vector<std::vector<EditNumber*>> board) {
 
-	createDLXMatrix();
+	createDLXMatrix(board);
 	
 	algorithmX();
 }
 
 void SudokuDLXMatrix::algorithmX() {
+	// https://en.wikipedia.org/wiki/Knuth%27s_Algorithm_X
+	//  /\
+	// Algorithm used to efficiently find all solutions to a sudoku puzzle.
+	
+
 
 }
 
-void SudokuDLXMatrix::createDLXMatrix() {
+void SudokuDLXMatrix::createDLXMatrix(vector<vector<EditNumber*>> board) {
 
 	createHeaders();
 
-	const vector<vector<bool>> boolMatrix = createBoolMatrix();
+	const vector<vector<bool>> boolMatrix = compareMatricies(createBoolMatrix(), board);
+	
+	
 	int i = 0, j = 0;
 
 	for (const auto& rows : boolMatrix) {
@@ -162,6 +169,56 @@ void SudokuDLXMatrix::createDLXMatrix() {
 		i++;
 		j = 0;
 	}
+}
+
+vector<vector<bool>> SudokuDLXMatrix::compareMatricies(vector<vector<bool>> boolMatrix, vector<vector<EditNumber*>> currentBoard) {
+
+	int k = 0, h = 0;
+	for (const auto& row : currentBoard) {
+
+		for (const auto& i : row) {
+
+			int num = i->getNumber();
+
+			if (num != 0) {
+
+				// 81 different squares
+				for (int i(0); i < boolMatrix.size(); i++) {
+
+					// Deviding by nine then directly multiplying acts as a floor() by 9s
+					auto& rows = boolMatrix[(i / 9) * 9];
+					bool rowClear = false;
+
+					for (int j(0); j < rows.size(); j++) {
+
+						// If the row hasn't been declared clear and the number is at a spot that shouldn't get deleted
+						if (!rowClear && i % 9 - num == 0 && rows[j] == 1) {
+							// Set the row to be cleared
+							rowClear = true;
+
+							for (int q(0); q < 9; q++) {
+								boolMatrix[j][(i / 9) * 9 + q] = 0;
+							}
+							boolMatrix[j][i] = 1;
+						}
+						else {
+							rows[j] = 0;
+
+							if (rowClear && rows[j] == 1) {
+
+								for (int q(0); q < 9; q++) {
+									boolMatrix[j][(i / 9) * 9 + num + (q * 9)] = 0;
+								}
+							}
+						}
+					}
+				}
+			}
+			k++;
+		}
+		h++;
+	}
+	return boolMatrix;
 }
 
 void SudokuDLXMatrix::createHeaders() {

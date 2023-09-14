@@ -15,7 +15,7 @@ public:
 	// Function that creates the whole Boolean preset matrix
 	vector<vector<bool>> createBoolMatrix();
 
-	void solve();
+	void solve(std::vector<std::vector<EditNumber*>> board);
 
 	vector<vector<shared_ptr<DLXNode>>> presetDLXMatrix;
 private:
@@ -31,8 +31,11 @@ private:
 	//
 	void algorithmX();
 
-	//
-	void createDLXMatrix();
+	// Function for running all sub-functions for creating all matricies
+	void createDLXMatrix(std::vector<std::vector<EditNumber*>> board);
+
+	// Function for creating the completed boolMatrix for solving the puzzle, compares the full matrix with the current board possitions
+	vector<vector<bool>> compareMatricies(vector<vector<bool>> boolMatrix, vector<vector<EditNumber*>> currentBoard);
 
 	// Function for creating the headers for the matrix
 	void createHeaders();

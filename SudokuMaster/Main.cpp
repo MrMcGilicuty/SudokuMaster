@@ -154,8 +154,13 @@ int main()
     // Shapes for side bars
     sf::RectangleShape barLeft;
     sf::RectangleShape barRight;
+
     // Creating the vector to hold each CellTextNum 9x9 board
     std::vector<std::vector<EditNumber*>> numberCells;
+
+    // DLX wizard object
+    SudokuDLXMatrix matrixMaker;
+
     //Map for Fonts
     std::map<int, std::string> fonts {
         { 1, "resources/data-latin.ttf" },
@@ -264,7 +269,7 @@ int main()
     Button checkSol(sf::Vector2f(0, 1210), 60, fonts[1], false, 4.0f, checkCells);
 
     // Lambda for Loading the cells in when you press a level button
-    auto loadCells = [&numberCells, &mode, &checkSol](std::string fileName) {
+    auto loadCells = [&numberCells, &mode, &checkSol, &matrixMaker](std::string fileName) {
         std::vector<std::vector<int>> boardVector = loadSudokuFile(fileName);
         checkSol.baseFile = fileName; // Setting the check button's file
         mode = "Preset";
@@ -286,22 +291,8 @@ int main()
             }
             x++;
         }
+        matrixMaker.solve(numberCells);
     };
-    
-    SudokuDLXMatrix matrixMaker;
-
-    // For debugging
-    /*std::vector<std::vector<bool>> boolMatrix = matrixMaker.createBoolMatrix();
-    std::cout << "\n";
-    // For printing out the boolMatrix
-    /*for (const auto& rows : boolMatrix) {
-        for (const auto& num : rows) {
-            num ? std::cout << num : std::cout << "_";
-        }
-        std::cout << "\n";
-    }*/
-
-    matrixMaker.solve();
 
     // Draw Loop
     while (window.isOpen())

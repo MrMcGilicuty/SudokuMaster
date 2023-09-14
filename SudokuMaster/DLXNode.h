@@ -12,11 +12,16 @@ public:
 
 	
 	void setRow(int _row);
+
 	int getRow();
 
-	int ID;
-	bool one;
+	void cover();
+
+	void uncover();
+
+	int ID = -1;
+	bool one = false;
 	bool header = false;
 private:
-	int row;
+	int row = 0;
 };

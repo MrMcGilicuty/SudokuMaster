@@ -82,7 +82,14 @@ vector<vector<bool>> SudokuDLXMatrix::createBoolMatrix() {
 }
 
 void SudokuDLXMatrix::solve() {
+
 	createDLXMatrix();
+	
+	algorithmX();
+}
+
+void SudokuDLXMatrix::algorithmX() {
+
 }
 
 void SudokuDLXMatrix::createDLXMatrix() {

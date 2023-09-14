@@ -289,8 +289,10 @@ int main()
     };
     
     SudokuDLXMatrix matrixMaker;
-    //std::vector<std::vector<bool>> boolMatrix = matrixMaker.createBoolMatrix();
-    //std::cout << "\n";
+
+    // For debugging
+    /*std::vector<std::vector<bool>> boolMatrix = matrixMaker.createBoolMatrix();
+    std::cout << "\n";
     // For printing out the boolMatrix
     /*for (const auto& rows : boolMatrix) {
         for (const auto& num : rows) {

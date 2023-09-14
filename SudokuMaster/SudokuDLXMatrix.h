@@ -29,6 +29,9 @@ private:
 	vector<vector<bool>> boolMatrix;
 
 	//
+	void algorithmX();
+
+	//
 	void createDLXMatrix();
 
 	// Function for creating the headers for the matrix

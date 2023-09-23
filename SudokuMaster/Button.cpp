@@ -69,6 +69,7 @@ void Button::addClickBackground(sf::Event& event, sf::RenderWindow& window, bool
     // If the Button is clicked
     if (event.type == event.MouseButtonPressed && isMouseOver(window, width, height)) {
         clickBackground.setFillColor(pressColor);
+        window.display();
         callback(baseFile);
     }
     // If the Button is not clicked

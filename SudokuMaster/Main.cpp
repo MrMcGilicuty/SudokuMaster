@@ -267,6 +267,22 @@ int main()
     };
     Button checkSol(sf::Vector2f(0, 1210), 60, fonts[1], false, 4.0f, checkCells);
 
+    auto solvePuzzle = [&matrixMaker, &numberCells](std::string fileName) {
+        const vector<vector<bool>> boolMatrix = matrixMaker.compareMatricies(matrixMaker.createBoolMatrix(), numberCells);
+
+        for (const auto& row : boolMatrix) {
+            for (const bool num : row) {
+                if (num)
+                    std::cout << 1;
+                else
+                    std::cout << "_";
+            }
+            std::cout << "\n";
+        }
+    };
+
+    Button solve(sf::Vector2f(0, 1010), 60, fonts[1], false, 4.0f, solvePuzzle);
+
     // Lambda for Loading the cells in when you press a level button
     auto loadCells = [&numberCells, &mode, &checkSol, &matrixMaker](std::string fileName) {
         std::vector<std::vector<int>> boardVector = loadSudokuFile(fileName);
@@ -289,17 +305,6 @@ int main()
                 y++;
             }
             x++;
-        }
-        const vector<vector<bool>> boolMatrix = matrixMaker.compareMatricies(matrixMaker.createBoolMatrix(), numberCells);
-
-        for (const auto& row : boolMatrix) {
-            for (const bool& num : row) {
-                if (num)
-                    std::cout << 1;
-                else
-                    std::cout << "_";
-            }
-            std::cout << "\n";
         }
     };
 
@@ -346,7 +351,7 @@ int main()
         window.draw(barLeft);
         window.draw(barRight);
         // Draws the green button
-        checkSol.setString("Check Solution");
+        checkSol.setString("Check Solution?");
         checkSol.blockInput();
 
         checkSol.centerText(dif / 2);
@@ -354,6 +359,15 @@ int main()
         checkSol.addClickBackground(event, window, false, sf::Color(0x109830FF), sf::Color(0x20D820FF));
         checkSol.drawBack(window);
         checkSol.drawTo(window);
+
+        solve.setString("Solve?");
+        solve.blockInput();
+
+        solve.centerText(dif / 2);
+        solve.addBackground(dif / 2 - 100, 100);
+        solve.addClickBackground(event, window, false, sf::Color(0x109830FF), sf::Color(0x20D820FF));
+        solve.drawBack(window);
+        solve.drawTo(window);
 
         modeText.setString(mode + " Mode");
         modeText.drawTo(window);

@@ -12,12 +12,12 @@ SudokuDLXMatrix::SudokuDLXMatrix() {
 }
 
 vector<vector<bool>> SudokuDLXMatrix::createBoolMatrix() {
-	int constraintStart[4] = { 0, 81, 81 * 2, 81 * 3 }; // Each constraint's respective starting point
+	unsigned int constraintStart[4] = { 0, 81, 81 * 2, 81 * 3 }; // Each constraint's respective starting point
 
-	for (int i(0); i < 729; i++) {
+	for (unsigned int i(0); i < 729; i++) {
 
 		
-		for (int j(0); j < 324; j++) {
+		for (unsigned int j(0); j < 324; j++) {
 			int constraintIndex = j / 81;
 			bool node;
 
@@ -84,17 +84,56 @@ vector<vector<bool>> SudokuDLXMatrix::createBoolMatrix() {
 void SudokuDLXMatrix::solve(std::vector<std::vector<EditNumber*>>& board) {
 
 	createDLXMatrix(board);
-	
-	algorithmX();
+	coverZero();
+	algorithmX(constraints);
 }
 
-void SudokuDLXMatrix::algorithmX() {
+void SudokuDLXMatrix::coverZero() {
+	for (auto& row : constraints) {
+		for (auto& link : row) {
+			// If the number isn't a header
+			if (!link->header) {
+				if (!link->one) {
+					link->cover();
+				}
+			}
+		}
+	}
+}
+
+int SudokuDLXMatrix::numOnes(shared_ptr<DLXNode> head) {
+	int numOnes = 0;
+	do {
+		head = head->down;
+		if (head->one)
+			numOnes++;
+	} while (!head->header);
+
+	return numOnes;
+}
+
+bool SudokuDLXMatrix::matrixEmpty() {
+	bool empty = true;
+	for (auto& head : headers) {
+		if (!head->down->header)
+			empty = false;
+	}
+	return empty;
+}
+
+void SudokuDLXMatrix::algorithmX(vector<vector<shared_ptr<DLXNode>>> matrix) {
 	// https://en.wikipedia.org/wiki/Knuth%27s_Algorithm_X
 	//  /\
 	// Algorithm used to efficiently find all solutions to a sudoku puzzle.
-	
 
+	vector<shared_ptr<DLXNode>> partial;
+	if (matrixEmpty()) {
 
+		for (auto& head : headers) {
+			numOnes(head);
+		}
+
+	}
 }
 
 void SudokuDLXMatrix::createDLXMatrix(vector<vector<EditNumber*>>& board) {
@@ -221,7 +260,7 @@ vector<vector<bool>> SudokuDLXMatrix::compareMatricies(vector<vector<bool>> bool
 						}
 						else {
 							
-							if (rowClear && rows[j] == 1) {
+							if (rowClear && rows[j] == 1 && i % 9 - num == 0) {
 
 								for (int q(0); q < 81; q++) {
 									boolMatrix[num + (q * 9)][j] = 0;

@@ -58,6 +58,8 @@ public:
 	void blockInput();
 	// Turns on user input for this text object manually
 	void allowInput();
+	// Sets the ID of the EditNumber object
+	void setID(float id);
 
 protected:
 	// Returns the position of the Text Object

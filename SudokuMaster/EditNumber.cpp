@@ -169,6 +169,10 @@ float EditNumber::getID() {
     return CNID;
 }
 
+void EditNumber::setID(float id) {
+    CNID = id;
+}
+
 void EditNumber::inputLogic(int charTyped) {
     if (charTyped != BACKSPACE_KEY && charTyped != ESCAPE_KEY) {
         text = std::string(1, charTyped);

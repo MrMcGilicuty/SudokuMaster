@@ -216,7 +216,6 @@ int main()
     barRight.setFillColor(sf::Color(0xEFEFEFFF));
     barRight.setPosition(window_size.y + dif / 2 + (float)wrap, 0);
 
-    int id(0);
     for (int x = 0; x < 9; ++x) {
         // Declare a new row for this x index
         std::vector<EditNumber*> row;
@@ -228,13 +227,13 @@ int main()
                 100,
                 fonts[2],
                 false,
-                id);
+                1);
             // Add EditNumber to the row
             row.push_back(cellTextNum);
-            ++id;
         }
         // Add the row to the numberCells vector
         numberCells.push_back(row);
+        row.clear();
     }
 
     // Lambda for checking the cells with the solution in the file
@@ -291,7 +290,17 @@ int main()
             }
             x++;
         }
-        matrixMaker.solve(numberCells);
+        const vector<vector<bool>> boolMatrix = matrixMaker.compareMatricies(matrixMaker.createBoolMatrix(), numberCells);
+
+        for (const auto& row : boolMatrix) {
+            for (const bool& num : row) {
+                if (num)
+                    std::cout << 1;
+                else
+                    std::cout << "_";
+            }
+            std::cout << "\n";
+        }
     };
 
     // Draw Loop

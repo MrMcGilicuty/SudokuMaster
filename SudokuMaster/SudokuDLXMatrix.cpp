@@ -81,7 +81,7 @@ vector<vector<bool>> SudokuDLXMatrix::createBoolMatrix() {
 	return boolMatrix;
 }
 
-void SudokuDLXMatrix::solve(std::vector<std::vector<EditNumber*>> board) {
+void SudokuDLXMatrix::solve(std::vector<std::vector<EditNumber*>>& board) {
 
 	createDLXMatrix(board);
 	
@@ -97,12 +97,11 @@ void SudokuDLXMatrix::algorithmX() {
 
 }
 
-void SudokuDLXMatrix::createDLXMatrix(vector<vector<EditNumber*>> board) {
+void SudokuDLXMatrix::createDLXMatrix(vector<vector<EditNumber*>>& board) {
 
 	createHeaders();
 
 	const vector<vector<bool>> boolMatrix = compareMatricies(createBoolMatrix(), board);
-	
 	
 	int i = 0, j = 0;
 
@@ -171,22 +170,41 @@ void SudokuDLXMatrix::createDLXMatrix(vector<vector<EditNumber*>> board) {
 	}
 }
 
-vector<vector<bool>> SudokuDLXMatrix::compareMatricies(vector<vector<bool>> boolMatrix, vector<vector<EditNumber*>> currentBoard) {
+vector<vector<bool>> SudokuDLXMatrix::compareMatricies(vector<vector<bool>> boolMatrix, vector<vector<EditNumber*>>& currentBoard) {
+
+	for (int i(0); i < 9; i++) {
+		for (int j(0); j < 9; j++) {
+
+			int buff;
+
+			// Switches the x and y values of the board vector because it counts (x,y) where the boolMatrix counts (y,x)
+			if ((bool)currentBoard[i][j]->getID()) {
+				buff = currentBoard[i][j]->getNumber();
+				currentBoard[i][j]->setString(to_string(currentBoard[j][i]->getNumber()));
+				currentBoard[j][i]->setString(to_string(buff));
+				currentBoard[i][j]->setID(0);
+				currentBoard[j][i]->setID(0);
+			}
+		}
+	}
 
 	int k = 0, h = 0;
 	for (const auto& row : currentBoard) {
 
-		for (const auto& i : row) {
+		for (const auto& cell : row) {
 
-			int num = i->getNumber();
+			int num = cell->getNumber(); // Index of the current number on the board
 
 			if (num != 0) {
+				// Get the number into Index form
+				num--;
 
-				// 81 different squares
-				for (int i(0); i < boolMatrix.size(); i++) {
+				for (int i(0); i < 9; i++) {
 
-					// Deviding by nine then directly multiplying acts as a floor() by 9s
-					auto& rows = boolMatrix[(i / 9) * 9];
+					// Gets the starting position for the 9 rows that are going to change
+					const int rowStart = k * 9;
+					// Grabing the current starting row
+					auto& rows = boolMatrix[rowStart + i];
 					bool rowClear = false;
 
 					for (int j(0); j < rows.size(); j++) {
@@ -197,19 +215,20 @@ vector<vector<bool>> SudokuDLXMatrix::compareMatricies(vector<vector<bool>> bool
 							rowClear = true;
 
 							for (int q(0); q < 9; q++) {
-								boolMatrix[j][(i / 9) * 9 + q] = 0;
+								boolMatrix[rowStart + q][j] = 0;
 							}
-							boolMatrix[j][i] = 1;
+							boolMatrix[rowStart + num][j] = 1;
 						}
 						else {
-							rows[j] = 0;
-
+							
 							if (rowClear && rows[j] == 1) {
 
-								for (int q(0); q < 9; q++) {
-									boolMatrix[j][(i / 9) * 9 + num + (q * 9)] = 0;
+								for (int q(0); q < 81; q++) {
+									boolMatrix[num + (q * 9)][j] = 0;
 								}
 							}
+							else
+								rows[j] = 0;
 						}
 					}
 				}
@@ -218,6 +237,25 @@ vector<vector<bool>> SudokuDLXMatrix::compareMatricies(vector<vector<bool>> bool
 		}
 		h++;
 	}
+
+	for (int i(0); i < 9; i++) {
+		for (int j(0); j < 9; j++) {
+
+			int buff;
+
+			// Switches the x and y values of the board vector because it counts (x,y) where the boolMatrix counts (y,x)
+			if (!(bool)currentBoard[i][j]->getID()) {
+				buff = currentBoard[i][j]->getNumber();
+				currentBoard[i][j]->setString(to_string(currentBoard[j][i]->getNumber()));
+				currentBoard[j][i]->setString(to_string(buff));
+				currentBoard[i][j]->setID(1);
+				currentBoard[j][i]->setID(1);
+			}
+			if (currentBoard[i][j]->getNumber() == 0)
+				currentBoard[i][j]->setString("");
+		}
+	}
+
 	return boolMatrix;
 }
 

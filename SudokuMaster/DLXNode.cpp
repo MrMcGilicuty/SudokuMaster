@@ -1,4 +1,5 @@
 #include "DLXNode.h"
+#include <iostream>
 #include <memory>
 
 DLXNode::DLXNode() {
@@ -6,6 +7,7 @@ DLXNode::DLXNode() {
 	one = false;
 	header = false;
 	row = 0;
+	this->self = self;
 }
 
 void DLXNode::setRow(int _row) {
@@ -24,9 +26,9 @@ void DLXNode::cover() {
 }
 
 void DLXNode::uncover() {
-	left->right = std::make_shared<DLXNode>(this);
-	right->left = std::make_shared<DLXNode>(this);
-	down->up    = std::make_shared<DLXNode>(this);
-	up->down    = std::make_shared<DLXNode>(this);
+		left->right = self;
+		right->left = self;
+		down->up    = self;
+		up->down    = self;
 }
 

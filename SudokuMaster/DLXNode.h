@@ -16,6 +16,10 @@ public:
 
 	int getRow();
 
+	void setCol(int _col);
+
+	int getCol();
+
 	void cover();
 
 	void uncover();
@@ -25,4 +29,5 @@ public:
 	bool header;
 private:
 	int row;
+	int col;
 };

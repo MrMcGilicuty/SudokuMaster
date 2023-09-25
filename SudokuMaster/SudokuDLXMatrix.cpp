@@ -11,8 +11,11 @@ SudokuDLXMatrix::SudokuDLXMatrix() {
 
 }
 
-vector<vector<bool>> SudokuDLXMatrix::createBoolMatrix() {
+vector<vector<bool>>& SudokuDLXMatrix::createBoolMatrix() {
 	unsigned int constraintStart[4] = { 0, 81, 81 * 2, 81 * 3 }; // Each constraint's respective starting point
+
+	vector<bool> row;
+	vector<vector<bool>> boolMatrix;
 
 	for (unsigned int i(0); i < 729; i++) {
 
@@ -23,54 +26,40 @@ vector<vector<bool>> SudokuDLXMatrix::createBoolMatrix() {
 
 			// Constraint 1
 			if (constraintIndex == 0) {
-
 				// Checks in the first constraint if there should be a 1 or a 0
 				i / 9 == j ? node = 1 : node = 0;
-
 			}
 			// Constraint 2
 			else if (constraintIndex == 1) {
-
 				// Checks in the second constraint if there should be a 1 or a 0
 				// Gets the starting points
 				(i / 81) * 9
-
 					// Offsets the Diagonal
 					+ (i % 9) 
-
 					// 81 is the 2nd Constraint starting point
 					+ constraintStart[1] == j ? node = 1 : node = 0;
-
 			}
 			// Constraint 3
 			else if (constraintIndex == 2) {
-
 				// Checks in the Third constraint if there should be a 1 or a 0
 				// Gets the starting points of the diagonal.
 				((i / 9) % 9) * 9 
-
 					// Offsets the Diagonal
 					+ (i % 9)
 					// 81 * 2 is the 3rd Constraint starting point
 					+ constraintStart[2] == j ? node = 1 : node = 0;
-
 			}
 			// Constraint 4
 			else if (constraintIndex == 3) {
-
 				// Checks in the Fourth constraint if there should be a 1 or a 0
 				// splits the x-values into 1-3 along the whole height
 				(i / 243) * 27
-
 					// Splits every 1-3 into 1-9 then 1-3
 					+ ((i / 27) % 3) * 9
-
 					// Offsets the Diagonal
 					+ (i % 9)
-
 					// 81 * 3 is the 4th Constraint starting point
 					+ constraintStart[3] == j ? node = 1 : node = 0;
-				
 			}
 			row.push_back(node);
 		}
@@ -85,55 +74,165 @@ void SudokuDLXMatrix::solve(std::vector<std::vector<EditNumber*>>& board) {
 
 	createDLXMatrix(board);
 	coverZero();
-	algorithmX(constraints);
+
+	vector<vector<shared_ptr<DLXNode>>> partialSolutions;
+	algorithmX(partialSolutions);
 }
 
 void SudokuDLXMatrix::coverZero() {
 	for (auto& row : constraints) {
 		for (auto& link : row) {
-			// If the number isn't a header
-			if (!link->header) {
-				if (!link->one) {
-					link->cover();
-				}
+			// If the number isn't a header and not a one
+			if (!link->header && !link->one) {
+				link->cover();
 			}
 		}
 	}
 }
 
+void SudokuDLXMatrix::coverHead(shared_ptr<DLXNode> column) {
+	
+	while (!column->header) {
+		column = column->down;
+	}
+	column->left->right = column->right;
+	column->right->left = column->left;
+	
+	int original = row->getCol();
+	do {
+		row->up->down = row->down;
+		row->down->up = row->up;
+		row = row->right;
+	} while (row->getCol() != original);
+}
+
+void SudokuDLXMatrix::uncoverHead(shared_ptr<DLXNode> column) {
+	while (!column->header) {
+		column = column->down;
+	}
+	column->left->right = column;
+	column->right->left = column;
+	
+	int original = row->getCol();
+	do {
+		row->up->down = row;
+		row->down->up = row;
+		row = row->right;
+	} while (row->getCol() != original);
+}
+
+void SudokuDLXMatrix::coverRow(shared_ptr<DLXNode> row) {
+
+	
+}
+
+void SudokuDLXMatrix::uncoverRow(shared_ptr<DLXNode> row) {
+	
+}
+
+shared_ptr<DLXNode> SudokuDLXMatrix::lowestOnesColumn(shared_ptr<DLXNode> origin) {
+	
+	vector<int> ones;
+	/*
+	if (origin->ID == origin->right->ID) {
+		return origin;
+	}*/
+	origin = origin->right;
+	while (origin->ID != -1) {
+
+		// Not including the origin
+		if (origin->ID != -1)
+			ones.push_back(numOnes(origin));
+	}
+
+	int j = 0;
+	int lowest = ones[j];
+	// Skip the first time because we initialize the lowest
+	for (int i(1); i < ones.size(); i++) {
+
+		if (ones[i] < lowest) {
+			lowest = ones[i];
+			j = i;
+		}
+	}
+
+	for (int i(0); i < j; i++) {
+		origin = origin->right;
+	}
+	return origin;
+}
+
 int SudokuDLXMatrix::numOnes(shared_ptr<DLXNode> head) {
 	int numOnes = 0;
 	do {
+		// Check down until you loop for 1s
 		head = head->down;
 		if (head->one)
 			numOnes++;
-	} while (!head->header);
+
+	} while (!head->down->header);
 
 	return numOnes;
 }
 
-bool SudokuDLXMatrix::matrixEmpty() {
-	bool empty = true;
-	for (auto& head : headers) {
-		if (!head->down->header)
-			empty = false;
-	}
-	return empty;
-}
-
-void SudokuDLXMatrix::algorithmX(vector<vector<shared_ptr<DLXNode>>> matrix) {
+void SudokuDLXMatrix::algorithmX(vector<vector<shared_ptr<DLXNode>>> solution) {
 	// https://en.wikipedia.org/wiki/Knuth%27s_Algorithm_X
 	//  /\
 	// Algorithm used to efficiently find all solutions to a sudoku puzzle.
 
-	vector<shared_ptr<DLXNode>> partial;
-	if (matrixEmpty()) {
+	// Level 0
+	if (headers[0]) {
 
-		for (auto& head : headers) {
-			numOnes(head);
+		// Selects the header with the lowest ones
+		shared_ptr<DLXNode> col = lowestOnesColumn(headers[0]);
+		// If there is a gap in the matrix then close
+		if (!numOnes(col)) {
+			return;
 		}
 
+		// Level 1
+		// For every column with a 1 that shares a 1 with the row with the least ones, cover each repsective row and column
+		do {
+			col = col->down;
+
+			int buf = col->getCol();
+			vector<shared_ptr<DLXNode>> partial;
+			// Cycle through every right
+			do {
+				partial.push_back(col);
+				col = col->right;
+
+			} while (col->getCol() == buf);
+
+			solution.push_back(partial);
+			partial.clear();
+
+			// Cycle through every right
+			do {
+				col = col->right;
+
+				auto _buf = col;
+				// Cycle through every down
+				
+
+				coverRow(col);
+
+
+				
+
+				col = _buf;
+
+				coverHead(col);
+
+			} while (col->getCol() == buf);
+
+			algorithmX(solution);
+
+
+		} while (!col->down->header);
+
 	}
+	return;
 }
 
 void SudokuDLXMatrix::createDLXMatrix(vector<vector<EditNumber*>>& board) {
@@ -151,6 +250,7 @@ void SudokuDLXMatrix::createDLXMatrix(vector<vector<EditNumber*>>& board) {
 			// The first time through a row
 			if (!j) {
 				node.setRow(i);
+				node.setCol(j);
 				num ? node.one = 1 : node.one = 0;
 
 				// If this is the first row
@@ -172,6 +272,7 @@ void SudokuDLXMatrix::createDLXMatrix(vector<vector<EditNumber*>>& board) {
 			else {
 				
 				node.setRow(i);
+				node.setCol(j);
 				num ? node.one = 1 : node.one = 0;
 
 				// Gaurenteed to have a left value if it's not the first time
@@ -209,7 +310,7 @@ void SudokuDLXMatrix::createDLXMatrix(vector<vector<EditNumber*>>& board) {
 	}
 }
 
-vector<vector<bool>> SudokuDLXMatrix::compareMatricies(vector<vector<bool>> boolMatrix, vector<vector<EditNumber*>>& currentBoard) {
+vector<vector<bool>> SudokuDLXMatrix::compareMatricies(vector<vector<bool>>& boolMatrix, vector<vector<EditNumber*>>& currentBoard) {
 
 	for (int i(0); i < 9; i++) {
 		for (int j(0); j < 9; j++) {
@@ -265,6 +366,7 @@ vector<vector<bool>> SudokuDLXMatrix::compareMatricies(vector<vector<bool>> bool
 								for (int q(0); q < 81; q++) {
 									boolMatrix[num + (q * 9)][j] = 0;
 								}
+								rows[j] = 1;
 							}
 							else
 								rows[j] = 0;
@@ -299,6 +401,12 @@ vector<vector<bool>> SudokuDLXMatrix::compareMatricies(vector<vector<bool>> bool
 }
 
 void SudokuDLXMatrix::createHeaders() {
+	// Origin Head, something just to keep track of each column head
+	DLXNode origin;
+	origin.header = true;
+	origin.setRow(-1);
+	origin.ID = -1;
+	headers.push_back(make_shared<DLXNode>(origin));
 
 	DLXNode head;
 	head.header = true;
@@ -327,5 +435,6 @@ void SudokuDLXMatrix::createHeaders() {
 		}
 		headers.push_back(make_shared<DLXNode>(node));
 	}
-
+	origin.right = headers[1];
+	origin.left  = headers.at(headers.size() - 1);
 }

@@ -18,6 +18,14 @@ int DLXNode::getRow() {
 	return row;
 }
 
+void DLXNode::setCol(int _col) {
+	col = _col;
+}
+
+int DLXNode::getCol() {
+	return col;
+}
+
 void DLXNode::cover() {
 	left->right = right;
 	right->left = left;

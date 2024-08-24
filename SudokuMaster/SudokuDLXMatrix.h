@@ -17,6 +17,8 @@ public:
 	// Function for creating the completed boolMatrix for solving the puzzle, compares the full matrix with the current board possitions
 	vector<vector<bool>> compareMatricies(vector<vector<bool>>& boolMatrix, vector<vector<EditNumber*>>& currentBoard);
 
+	// Function that creates the whole Boolean preset matrix
+	vector<vector<bool>>& createBoolMatrix();
 private:
 
 	// Vectors for the different constraints
@@ -24,9 +26,6 @@ private:
 
 	vector<shared_ptr<DLXNode>> cRow;
 	vector<vector<shared_ptr<DLXNode>>> constraints;
-
-	// Function that creates the whole Boolean preset matrix
-	vector<vector<bool>>& createBoolMatrix();
 	
 	// Function for running all sub-functions for creating all matricies
 	void createDLXMatrix(std::vector<std::vector<EditNumber*>>& board);
@@ -37,17 +36,17 @@ private:
 	// Covers all the zeros to make the matrix only full of 1s
 	void coverZero();
 
+	// Covers all the 1s
+	void cover(shared_ptr<DLXNode> column);
+
+	// Uncovers all the 1s
+	void uncover(shared_ptr<DLXNode> column);
+
 	// Covers a column header
 	void coverHead(shared_ptr<DLXNode> column);
 
 	// Uncovers a column header
 	void uncoverHead(shared_ptr<DLXNode> column);
-
-	// Covers a whole row
-	void coverRow(shared_ptr<DLXNode> row);
-
-	// Uncovers a whole row
-	void uncoverRow(shared_ptr<DLXNode> row);
 	
 	// counts the amount of ones in each column
 	shared_ptr<DLXNode> lowestOnesColumn(shared_ptr<DLXNode> origin);

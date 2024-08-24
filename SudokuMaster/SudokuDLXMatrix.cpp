@@ -90,43 +90,42 @@ void SudokuDLXMatrix::coverZero() {
 	}
 }
 
+void SudokuDLXMatrix::cover(shared_ptr<DLXNode> column) {
+	
+	
+	
+	for (shared_ptr<DLXNode> rowNode = column->down; rowNode != column; rowNode = rowNode->down) {
+		for (shared_ptr<DLXNode> rightCol = rowNode->right; rightCol != rowNode; rightCol = rightCol->right) {
+			
+			coverHead(rightCol);
+
+			rightCol->up->down = rightCol->down;
+			rightCol->down->up = rightCol->up;
+			
+		}
+	}
+}
+
+//void SudokuDLXMatrix::uncover(shared_ptr<DLXNode> column) {
+//	while (!column->header) {
+//		column = column->down;
+//	}
+//	column->left->right = column;
+//	column->right->left = column;
+//	
+//	int original = row->getCol();
+//	do {
+//			row->up->down = row;
+//		row->down->up = row;
+//		row = row->right;
+//	} while (row->getCol() != original);
+//}
+
 void SudokuDLXMatrix::coverHead(shared_ptr<DLXNode> column) {
 	
-	while (!column->header) {
-		column = column->down;
-	}
-	column->left->right = column->right;
-	column->right->left = column->left;
-	
-	int original = row->getCol();
-	do {
-		row->up->down = row->down;
-		row->down->up = row->up;
-		row = row->right;
-	} while (row->getCol() != original);
 }
 
 void SudokuDLXMatrix::uncoverHead(shared_ptr<DLXNode> column) {
-	while (!column->header) {
-		column = column->down;
-	}
-	column->left->right = column;
-	column->right->left = column;
-	
-	int original = row->getCol();
-	do {
-		row->up->down = row;
-		row->down->up = row;
-		row = row->right;
-	} while (row->getCol() != original);
-}
-
-void SudokuDLXMatrix::coverRow(shared_ptr<DLXNode> row) {
-
-	
-}
-
-void SudokuDLXMatrix::uncoverRow(shared_ptr<DLXNode> row) {
 	
 }
 
@@ -215,14 +214,12 @@ void SudokuDLXMatrix::algorithmX(vector<vector<shared_ptr<DLXNode>>> solution) {
 				// Cycle through every down
 				
 
-				coverRow(col);
-
 
 				
 
 				col = _buf;
 
-				coverHead(col);
+				cover(col);
 
 			} while (col->getCol() == buf);
 
